@@ -18,6 +18,14 @@ public class Jugador {
         return nom;
     }
 
+    public int getApostaActual() {
+        return apostaActual;
+    }
+
+    public void setApostaActual(int apostaActual) {
+        this.apostaActual = apostaActual;
+    }
+
     public void setnCartes(int nCartes) {
         this.nCartes = nCartes;
     }
