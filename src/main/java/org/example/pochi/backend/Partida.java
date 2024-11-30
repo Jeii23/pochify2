@@ -11,6 +11,7 @@ public class Partida {
     private int rondaActual;
     private int cartesTotals;
 
+    private int jugadorInicial;
     private TipusRonda tipusRonda;
 
     public Partida(int nJugadors)
@@ -21,7 +22,8 @@ public class Partida {
         this.cartesTotals=calcularNCartes(nJugadors);
         this.nRondes=calcularNRondes(nJugadors);
         this.tipusRonda=TipusRonda.BASIC;
-        this.rondaActual=16;
+        this.rondaActual=1;
+        this.jugadorInicial=1;
     }
 
     private void inicialitzarJugadors(int nJugadors) {
@@ -52,6 +54,10 @@ public class Partida {
         return rondes;
     }
 
+    public int getRondaActual() {
+        return rondaActual;
+    }
+
     public int getnRondes() {
         return nRondes;
     }
@@ -72,8 +78,9 @@ public class Partida {
     }
 
     public void printJugadors(){
+        System.out.println("Ronda: "+rondaActual);
         for (int i=0;i<nJugadors;i++)
-            System.out.println(jugadors.get(i).getNom()+" "+jugadors.get(i).getnCartes()+" "+this.tipusRonda);
+            System.out.println(jugadors.get(i).getNom()+" "+jugadors.get(i).getApostaActual()+" "+jugadors.get(i).getPuntuacioTotal());
     }
 
     public void donarCartes(){
@@ -116,17 +123,49 @@ public class Partida {
     public Vector<Jugador> getJugadors() {
         return jugadors;
     }
-    public int getRondaActual() {
-        return rondaActual;
+
+    public int getJugadorInicial() {
+        return jugadorInicial;
     }
+
+    public int getJugadorFinal(){
+
+        if(jugadorInicial<2)
+            return 4;
+        else
+            return jugadorInicial-1;
+    }
+
     public void jugarRonda()
     {
-        Scanner scanner = new Scanner(System.in);
+        donarCartes();
+        int apostaTotal=0;
         for (int i=0;i<nJugadors;i++)
         {
-            int aposta= scanner.nextInt();
+            Scanner scanner= new Scanner(System.in);
+            System.out.println("Aposta Jugador"+i);
+            int aposta=scanner.nextInt();
+
+            apostaTotal=apostaTotal+aposta;
             jugadors.get(i).setApostaActual(aposta);
+
+            if(i==nJugadors-1&&apostaTotal==jugadors.get(i).getnCartes())
+            {
+                System.out.println("No pots fer aquest número d'apostes");
+                aposta=scanner.nextInt();
+            }
         }
 
+        for (int i=0;i<nJugadors;i++) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Encerts Jugador"+i);
+            int encerts = scanner.nextInt();
+            jugadors.get(i).calcularPuntuacio(this.tipusRonda,encerts);
+        }
+
+        rondaActual++;
+        calcularTipusRonda();
+        jugadorInicial=(jugadorInicial+1)%nJugadors;
     }
 }
+
