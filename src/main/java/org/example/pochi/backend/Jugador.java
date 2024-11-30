@@ -44,9 +44,19 @@ public class Jugador {
         this.nom=nom;
     }
 
-
-
-
+    public void calcularPuntuacio(TipusRonda tipus, int encerts) {
+        if (encerts == apostaActual) {
+            if (tipus != TipusRonda.OROS_DOBLES) {
+                puntuacioTotal += 10 + 5 * encerts;
+            } else
+                puntuacioTotal += 20 + 10 * encerts;
+        } else {
+            if (tipus != TipusRonda.OROS_DOBLES) {
+                puntuacioTotal -= 5 *  Math.abs(encerts-apostaActual);
+            } else
+                puntuacioTotal -= 10 * Math.abs(encerts-apostaActual);
+        }
+    }
 
 
 
