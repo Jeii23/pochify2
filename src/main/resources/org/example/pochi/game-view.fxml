@@ -7,4 +7,6 @@
       spacing="20" alignment="CENTER" style="-fx-padding: 20;">
     <Button fx:id="threePlayersButton" text="3 jugadores" onAction="#onThreePlayersClick"/>
     <Button fx:id="fourPlayersButton" text="4 jugadores" onAction="#onFourPlayersClick"/>
+    <Button fx:id="fivePlayersButton" text="5 jugadores" onAction="#onFivePlayersClick"/>
+
 </VBox>

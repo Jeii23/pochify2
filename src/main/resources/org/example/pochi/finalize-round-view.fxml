@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.FinalizeRoundController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+    <TextField fx:id="roundInputField" promptText="Número de aciertos"/>
+    <Button fx:id="finalizeButton" text="Finalizar" onAction="#onFinalizeClick"/>
+</VBox>

@@ -116,7 +116,9 @@ public class Partida {
     public Vector<Jugador> getJugadors() {
         return jugadors;
     }
-
+    public int getRondaActual() {
+        return rondaActual;
+    }
     public void jugarRonda()
     {
         Scanner scanner = new Scanner(System.in);

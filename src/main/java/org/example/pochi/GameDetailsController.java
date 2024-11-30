@@ -1,10 +1,18 @@
 package org.example.pochi;
 
-import org.example.pochi.backend.Partida;
 import org.example.pochi.backend.Jugador;
+import org.example.pochi.backend.Partida;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
+import org.example.pochi.backend.TipusRonda;
+
+import java.io.IOException;
+import java.util.Vector;
 
 public class GameDetailsController {
 
@@ -20,20 +28,39 @@ public class GameDetailsController {
   private ListView<String> playersListView;
 
   @FXML
-  public void initialize() {
-    // Hardcodeado por ahora, aquí irían los datos obtenidos del backend
-    int roundNumber = partida.getnRondes(); // Esto debería ser: partida.getRoundNumber();
-    Enum roundType = partida.g; // Esto debería ser: partida.getRoundType();
-    String[] playerNames = {"Jugador 1", "Jugador 2", "Jugador 3"}; // partida.getPlayers().map(p -> p.getName());
-    int[] playerScores = {10, 15, 20}; // partida.getPlayers().map(p -> p.getTotalScore());
-    int[] playerBets = {3, 2, 4}; // partida.getPlayers().map(p -> p.getRoundBet());
+  private Button finalizeRoundButton;
 
-    roundNumberLabel.setText("Número de ronda: " + roundNumber);
-    roundTypeLabel.setText("Tipo de ronda: " + roundType);
+  public void setPartida(Partida partida) {
+    this.partida = partida;
+    initializeData();
+  }
 
-    for (int i = 0; i < playerNames.length; i++) {
-      String playerInfo = playerNames[i] + " - Puntuación: " + playerScores[i] + " - Apuesta: " + playerBets[i];
+  private void initializeData() {
+    int rondaActual = partida.getRondaActual();
+    int rondaTotal = partida.getnRondes();
+    TipusRonda roundType = partida.getTipusRonda();
+    Vector<Jugador> jugadors = partida.getJugadors();
+
+    roundNumberLabel.setText("Número de ronda: " + rondaActual + "/" + rondaTotal);
+    roundTypeLabel.setText("Tipo de ronda: " + roundType.toLocalizedString());
+
+    for (int i = 0; i < jugadors.size(); i++) {
+      String playerInfo = jugadors.get(i).getNom()
+          + " - Puntuación: " + jugadors.get(i).getPuntuacioTotal()
+          + " - Apuesta: " + jugadors.get(i).getApostaActual();
       playersListView.getItems().add(playerInfo);
     }
+  }
+
+  @FXML
+  private void onFinalizeRoundClick() throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("finalize-round-view.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+
+    FinalizeRoundController controller = fxmlLoader.getController();
+    controller.setPartida(partida); // Pasar instancia de partida
+
+    Stage stage = (Stage) finalizeRoundButton.getScene().getWindow();
+    stage.setScene(scene);
   }
 }

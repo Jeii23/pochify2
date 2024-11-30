@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
@@ -9,4 +8,5 @@
     <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
     <Label fx:id="roundTypeLabel" text="Tipo de ronda: "/>
     <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"/>
+    <Button fx:id="finalizeRoundButton" text="Finalizar Ronda" onAction="#onFinalizeRoundClick"/>
 </VBox>

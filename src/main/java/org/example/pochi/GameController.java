@@ -1,5 +1,6 @@
 package org.example.pochi;
 
+import javafx.event.ActionEvent;
 import org.example.pochi.backend.Partida;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,10 @@ public class GameController {
   private Button fourPlayersButton;
 
   @FXML
+  private Button fivePlayersButton;
+
+
+  @FXML
   protected void onThreePlayersClick() throws IOException {
     startNewGame(3);
   }
@@ -27,6 +32,9 @@ public class GameController {
   @FXML
   protected void onFourPlayersClick() throws IOException {
     startNewGame(4);
+  }
+  public void onFivePlayersClick()throws IOException {
+    startNewGame(5);
   }
 
   private void startNewGame(int numPlayers) throws IOException {
@@ -36,7 +44,14 @@ public class GameController {
     // Cambiar a la pantalla de detalles de la partida
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game-details-view.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+
+    // Obtener el controlador de la nueva vista
+    GameDetailsController controller = fxmlLoader.getController();
+    controller.setPartida(partida); // Pasar la instancia de partida al nuevo controlador
+
     Stage stage = (Stage) threePlayersButton.getScene().getWindow();
     stage.setScene(scene);
   }
+
+
 }
