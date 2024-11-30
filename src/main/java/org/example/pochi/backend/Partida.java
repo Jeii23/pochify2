@@ -1,7 +1,8 @@
 import java.util.Vector;
-
+import java.util.Scanner;
 
 public class Partida {
+
     private Vector<Jugador> jugadors;
     private int nJugadors;
     private int nRondes;
@@ -104,5 +105,24 @@ public class Partida {
             else
                 tipusRonda=TipusRonda.OROS_DOBLES;
         }
+    }
+
+    public TipusRonda getTipusRonda() {
+        return tipusRonda;
+    }
+
+    public Vector<Jugador> getJugadors() {
+        return jugadors;
+    }
+
+    public void jugarRonda()
+    {
+        Scanner scanner = new Scanner(System.in);
+        for (int i=0;i<nJugadors;i++)
+        {
+            int aposta= scanner.nextInt();
+            jugadors.get(i).setApostaActual(aposta);
+        }
+        
     }
 }
