@@ -1,3 +1,5 @@
+package org.example.pochi.backend;
+
 public class Jugador {
     private String nom;
     private int puntuacioTotal;

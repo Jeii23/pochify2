@@ -1,3 +1,5 @@
+package org.example.pochi.backend;
+
 public enum TipusRonda {
     SIN_PALO,
     SUBASTA,

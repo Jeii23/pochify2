@@ -1,3 +1,5 @@
+package org.example.pochi.backend;
+
 import java.util.Vector;
 import java.util.Scanner;
 
@@ -123,6 +125,6 @@ public class Partida {
             int aposta= scanner.nextInt();
             jugadors.get(i).setApostaActual(aposta);
         }
-        
+
     }
 }

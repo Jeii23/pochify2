@@ -31,8 +31,7 @@ public class GameController {
 
   private void startNewGame(int numPlayers) throws IOException {
     // Llamada al backend para iniciar una nueva partida
-    partida = new Partida();
-    //partida.newGame(numPlayers); // Método del backend para iniciar partida
+    partida = new Partida(numPlayers);
 
     // Cambiar a la pantalla de detalles de la partida
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game-details-view.fxml"));

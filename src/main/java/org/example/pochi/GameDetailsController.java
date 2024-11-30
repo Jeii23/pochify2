@@ -22,8 +22,8 @@ public class GameDetailsController {
   @FXML
   public void initialize() {
     // Hardcodeado por ahora, aquí irían los datos obtenidos del backend
-    int roundNumber = 1; // Esto debería ser: partida.getRoundNumber();
-    String roundType = "Normal"; // Esto debería ser: partida.getRoundType();
+    int roundNumber = partida.getnRondes(); // Esto debería ser: partida.getRoundNumber();
+    Enum roundType = partida.g; // Esto debería ser: partida.getRoundType();
     String[] playerNames = {"Jugador 1", "Jugador 2", "Jugador 3"}; // partida.getPlayers().map(p -> p.getName());
     int[] playerScores = {10, 15, 20}; // partida.getPlayers().map(p -> p.getTotalScore());
     int[] playerBets = {3, 2, 4}; // partida.getPlayers().map(p -> p.getRoundBet());
