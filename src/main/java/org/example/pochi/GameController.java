@@ -39,19 +39,19 @@ public class GameController {
   }
 
   private void startNewGame(int numPlayers) throws IOException {
-    // Inicializar una nueva partida con el número de jugadores seleccionado
+    // Inicialitzar una nova partida
     partida = new Partida(numPlayers);
 
-    // Cambiar a la pantalla de nueva ronda
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new-round-view.fxml"));
+    // Navegar a la vista per establir els noms dels jugadors
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("set-player-names-view.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 400, 300);
 
-    // Obtener el controlador de la nueva vista y pasar la instancia de partida
-    NewRoundController controller = fxmlLoader.getController();
+    // Passar la instància de partida al nou controlador
+    SetPlayerNamesController controller = fxmlLoader.getController();
     controller.setPartida(partida);
 
-    // Cambiar la escena en la misma ventana
     Stage stage = (Stage) threePlayersButton.getScene().getWindow();
     stage.setScene(scene);
   }
+
 }
