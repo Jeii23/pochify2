@@ -7,7 +7,7 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.NewRoundController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label text="Introdueix les noves apostes per cada jugador:"/>
-    <TextField fx:id="betInputField" promptText="Apostes separades per comes (e.g., 1,2,3)"/>
-    <Button fx:id="finalizeButton" text="Finalitzar" onAction="#onFinalizeClick"/>
+    <Label fx:id="jugadorLabel" text="Aposta per Jugador 1"/>
+    <TextField fx:id="betInputField" promptText="Introdueix l'aposta"/>
+    <Button fx:id="finalizeButton" text="OK" onAction="#onFinalizeClick"/>
 </VBox>

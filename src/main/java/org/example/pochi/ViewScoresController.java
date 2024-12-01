@@ -1,22 +1,22 @@
 package org.example.pochi;
 
-import org.example.pochi.backend.Jugador;
 import org.example.pochi.backend.Partida;
+import org.example.pochi.backend.Jugador;
+import org.example.pochi.backend.TipusRonda;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.pochi.backend.TipusRonda;
 
 import java.io.IOException;
 import java.util.Vector;
 
-public class GameDetailsController {
+public class ViewScoresController {
 
-  private Partida partida; // Referencia a la instancia de partida
+  private Partida partida;
 
   @FXML
   private Label roundNumberLabel;
@@ -28,9 +28,7 @@ public class GameDetailsController {
   private ListView<String> playersListView;
 
   @FXML
-  private Button finalizeRoundButton;
-
-
+  private Button continueButton;
 
   public void setPartida(Partida partida) {
     this.partida = partida;
@@ -46,6 +44,7 @@ public class GameDetailsController {
     roundNumberLabel.setText("Número de ronda: " + rondaActual + "/" + rondaTotal);
     roundTypeLabel.setText("Tipus de ronda: " + roundType.toLocalizedString());
 
+    playersListView.getItems().clear();
     for (int i = 0; i < jugadors.size(); i++) {
       String playerInfo = jugadors.get(i).getNom()
           + " - Puntuació: " + jugadors.get(i).getPuntuacioTotal()
@@ -55,14 +54,20 @@ public class GameDetailsController {
   }
 
   @FXML
-  private void onFinalizeRoundClick() throws IOException {
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("finalize-round-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+  private void onContinueClick() {
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new-round-view.fxml"));
+      Scene scene = new Scene(fxmlLoader.load(), 400, 300);
 
-    FinalizeRoundController controller = fxmlLoader.getController();
-    controller.setPartida(partida); // Pasar instancia de partida
+      NewRoundController controller = fxmlLoader.getController();
+      controller.setPartida(partida);
 
-    Stage stage = (Stage) finalizeRoundButton.getScene().getWindow();
-    stage.setScene(scene);
+      Stage stage = (Stage) continueButton.getScene().getWindow();
+      stage.setScene(scene);
+
+    } catch (IOException e) {
+      System.err.println("Error al carregar la vista de nova ronda: " + e.getMessage());
+      e.printStackTrace();
+    }
   }
 }
