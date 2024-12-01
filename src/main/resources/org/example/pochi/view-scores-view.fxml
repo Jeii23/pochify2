@@ -6,8 +6,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <!-- view-scores-view.fxml -->
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.ViewScoresController"
-      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.SetPlayerNamesController"
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
+      prefWidth="500" prefHeight="600">
 
     <!-- Título -->
     <Label text="LA POCHA"
@@ -23,13 +24,13 @@
     <Label fx:id="roundCardsLabel" text="Número de cartes: "
            style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
 
-    <!-- Lista de jugadores -->
-    <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"
-              style="-fx-border-color: #BA55D3; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+    <!-- Caja de jugadores ajustable -->
+    <ListView fx:id="playersListView" maxHeight="Infinity" prefWidth="320"
+              style="-fx-background-color: #ECE4F8; -fx-border-color: #8A2BE2; -fx-border-width: 2;
+                     -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 10;"/>
 
     <!-- Botón de continuar -->
     <Button fx:id="continueButton" text="Continuar" onAction="#onContinueClick"
             style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
                    -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 150px; -fx-pref-height: 40px;"/>
 </VBox>
-
