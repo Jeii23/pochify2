@@ -54,7 +54,7 @@ public class SetPlayerNamesController {
     // Navegar a la següent vista (new-round-view.fxml)
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new-round-view.fxml"));
-      Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+      Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
       NewRoundController controller = fxmlLoader.getController();
       controller.setPartida(partida);

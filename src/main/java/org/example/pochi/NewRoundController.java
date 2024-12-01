@@ -99,7 +99,7 @@ public class NewRoundController {
       partida.avançarJugadorInicial(); // Actualitzar el jugador inicial per a la següent ronda
 
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game-details-view.fxml"));
-      Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+      Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
       GameDetailsController controller = fxmlLoader.getController();
       controller.setPartida(partida);

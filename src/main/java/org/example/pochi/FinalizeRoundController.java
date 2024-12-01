@@ -64,13 +64,14 @@ public class FinalizeRoundController {
   private void mostrarNovaVistaPuntuacions() {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("view-scores-view.fxml"));
-      Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+      Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
       ViewScoresController controller = fxmlLoader.getController();
       controller.setPartida(partida); // Passar la partida al controlador
 
       Stage stage = (Stage) finalizeButton.getScene().getWindow();
       stage.setScene(scene);
+
 
     } catch (IOException e) {
       System.err.println("Error al carregar la vista de puntuacions: " + e.getMessage());

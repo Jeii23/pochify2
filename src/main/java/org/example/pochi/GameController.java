@@ -44,7 +44,7 @@ public class GameController {
 
     // Navegar a la vista per establir els noms dels jugadors
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("set-player-names-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+    Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
     // Passar la instància de partida al nou controlador
     SetPlayerNamesController controller = fxmlLoader.getController();

@@ -58,7 +58,7 @@ public class GameDetailsController {
   @FXML
   private void onFinalizeRoundClick() throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("finalize-round-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 400, 300);
+    Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
     FinalizeRoundController controller = fxmlLoader.getController();
     controller.setPartida(partida); // Pasar instancia de partida
