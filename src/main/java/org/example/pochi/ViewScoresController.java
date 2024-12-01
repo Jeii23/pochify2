@@ -78,4 +78,18 @@ public class ViewScoresController {
       e.printStackTrace();
     }
   }
+  @FXML
+  private void initialize() {
+    // Manejar el evento de la tecla Enter para continuar
+    continueButton.setOnKeyPressed(event -> {
+      switch (event.getCode()) {
+        case ENTER:
+          onContinueClick(); // Llama al método que maneja el botón Continuar
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
 }
