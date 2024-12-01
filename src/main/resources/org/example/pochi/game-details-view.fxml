@@ -3,6 +3,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
+<!-- game-details-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.GameDetailsController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
     <Label fx:id="roundNumberLabel" text="Número de ronda: "/>

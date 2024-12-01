@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
-
+<!-- game-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.GameController"
       spacing="20" alignment="CENTER" style="-fx-padding: 20;">
     <Button fx:id="threePlayersButton" text="3 jugadors" onAction="#onThreePlayersClick"/>
