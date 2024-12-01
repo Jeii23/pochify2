@@ -6,7 +6,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.FinalizeRoundController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
+      prefWidth="500" prefHeight="600">
+
     <Label fx:id="jugadorLabel" text="Aposta per: "/> <!-- Assegura't que té aquest fx:id -->
     <TextField fx:id="roundInputField" promptText="Introdueix el número d'encerts"/>
     <Button fx:id="finalizeButton" text="Finalitzar" onAction="#onFinalizeClick"/>

@@ -7,7 +7,8 @@
 
 <!-- player-names-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.SetPlayerNamesController"
-      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;">
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
+      prefWidth="500" prefHeight="600">
 
     <!-- Título -->
     <Label text="LA POCHA"

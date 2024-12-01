@@ -7,7 +7,9 @@
 
 <!-- game-details-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.GameDetailsController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
+      prefWidth="500" prefHeight="600">
+
     <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
     <Label fx:id="roundTypeLabel" text="Tipus de ronda: "/>
     <Label fx:id="roundCardsLabel" text="Número de cartes: "/> <!-- Nou Label -->
