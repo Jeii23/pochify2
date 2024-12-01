@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-
+<!-- new-round-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.NewRoundController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
     <Label fx:id="jugadorLabel" text="Aposta per Jugador 1"/>

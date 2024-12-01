@@ -2,7 +2,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
-
+<!-- view-scores-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.ViewScoresController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
     <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
