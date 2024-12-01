@@ -16,6 +16,7 @@ public class FinalizeRoundController {
   private Partida partida;
   private int jugadorActual = 0; // Índex del jugador actual
 
+
   @FXML
   private Label jugadorLabel;
 
