@@ -5,9 +5,22 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
+<!-- player-names-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.SetPlayerNamesController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label text="Introduïu els noms dels jugadors"/>
-    <VBox fx:id="playerNamesContainer" spacing="5" alignment="CENTER"/>
-    <Button fx:id="confirmButton" text="Confirmar" onAction="#onConfirmClick"/>
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;">
+
+    <!-- Título -->
+    <Label text="LA POCHA"
+           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
+    <Label text="Introduïu els noms dels jugadors"
+           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+
+    <!-- Contenedor para los nombres -->
+    <VBox fx:id="playerNamesContainer" spacing="10" alignment="CENTER"
+          style="-fx-padding: 10; -fx-background-color: #FFFFFF; -fx-border-color: #BA55D3; -fx-border-radius: 10; -fx-background-radius: 10;"/>
+
+    <!-- Botón de confirmación -->
+    <Button fx:id="confirmButton" text="Confirmar" onAction="#onConfirmClick"
+            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
+                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 150px; -fx-pref-height: 40px;"/>
 </VBox>

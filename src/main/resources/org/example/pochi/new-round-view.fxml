@@ -4,10 +4,27 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
+
 <!-- new-round-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.NewRoundController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label fx:id="jugadorLabel" text="Aposta per Jugador 1"/>
-    <TextField fx:id="betInputField" promptText="Introdueix l'aposta"/>
-    <Button fx:id="finalizeButton" text="OK" onAction="#onFinalizeClick"/>
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;">
+
+    <!-- Título -->
+    <Label text="LA POCHA"
+           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
+    <Label text="Nova Ronda - Fes la teva aposta"
+           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+
+    <!-- Apuesta del jugador -->
+    <Label fx:id="jugadorLabel" text="Aposta per Jugador 1"
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #8A2BE2;"/>
+    <TextField fx:id="betInputField" promptText="Introdueix l'aposta"
+               style="-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: #BA55D3; -fx-border-radius: 5;
+                      -fx-background-radius: 5; -fx-pref-width: 200px;"/>
+
+    <!-- Botón para confirmar la apuesta -->
+    <Button fx:id="finalizeButton" text="OK" onAction="#onFinalizeClick"
+            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
+                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 100px; -fx-pref-height: 40px;"/>
 </VBox>
+

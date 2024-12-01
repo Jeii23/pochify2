@@ -1,13 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
+
 <!-- view-scores-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.ViewScoresController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
-    <Label fx:id="roundTypeLabel" text="Tipus de ronda: "/>
-    <Label fx:id="roundCardsLabel" text="Número de cartes: "/> <!-- Nou Labqel -->
-    <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"/>
-    <Button fx:id="continueButton" text="Continuar" onAction="#onContinueClick"/>
+      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;">
+
+    <!-- Título -->
+    <Label text="LA POCHA"
+           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
+    <Label text="Resultats de la ronda"
+           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+
+    <!-- Información de la ronda -->
+    <Label fx:id="roundNumberLabel" text="Número de ronda: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+    <Label fx:id="roundTypeLabel" text="Tipus de ronda: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+    <Label fx:id="roundCardsLabel" text="Número de cartes: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+
+    <!-- Lista de jugadores -->
+    <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"
+              style="-fx-border-color: #BA55D3; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+
+    <!-- Botón de continuar -->
+    <Button fx:id="continueButton" text="Continuar" onAction="#onContinueClick"
+            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
+                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 150px; -fx-pref-height: 40px;"/>
 </VBox>
+
