@@ -16,7 +16,6 @@ public class FinalizeRoundController {
   private Partida partida;
   private int jugadorActual = 0; // Índex del jugador actual
 
-
   @FXML
   private Label jugadorLabel;
 
@@ -79,4 +78,17 @@ public class FinalizeRoundController {
     }
   }
 
+  @FXML
+  private void initialize() {
+    // Manejar el evento de la tecla Enter en el campo de texto
+    roundInputField.setOnKeyPressed(event -> {
+      switch (event.getCode()) {
+        case ENTER:
+          onFinalizeClick(); // Llama al método que maneja el botón OK
+          break;
+        default:
+          break;
+      }
+    });
+  }
 }

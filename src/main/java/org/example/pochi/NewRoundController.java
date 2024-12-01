@@ -37,8 +37,20 @@ public class NewRoundController {
     // Obtenir l'ordre correcte dels jugadors
     this.jugadorsEnOrdre = partida.getJugadorsEnOrdre();
 
+    // Configurar el manejador de eventos para detectar "Enter"
+    betInputField.setOnKeyPressed(event -> {
+      switch (event.getCode()) {
+        case ENTER:
+          onFinalizeClick(); // Llamar al método que maneja el botón OK
+          break;
+        default:
+          break;
+      }
+    });
+
     // Mostrar el primer jugador per fer la seva aposta
     mostrarJugadorActual();
+
     partida.passarRonda();
   }
 
