@@ -23,7 +23,6 @@ public class GameController {
   @FXML
   private Button fivePlayersButton;
 
-
   @FXML
   protected void onThreePlayersClick() throws IOException {
     startNewGame(3);
@@ -33,25 +32,26 @@ public class GameController {
   protected void onFourPlayersClick() throws IOException {
     startNewGame(4);
   }
-  public void onFivePlayersClick()throws IOException {
+
+  @FXML
+  protected void onFivePlayersClick() throws IOException {
     startNewGame(5);
   }
 
   private void startNewGame(int numPlayers) throws IOException {
-    // Llamada al backend para iniciar una nueva partida
+    // Inicializar una nueva partida con el número de jugadores seleccionado
     partida = new Partida(numPlayers);
 
-    // Cambiar a la pantalla de detalles de la partida
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game-details-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+    // Cambiar a la pantalla de nueva ronda
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new-round-view.fxml"));
+    Scene scene = new Scene(fxmlLoader.load(), 400, 300);
 
-    // Obtener el controlador de la nueva vista
-    GameDetailsController controller = fxmlLoader.getController();
-    controller.setPartida(partida); // Pasar la instancia de partida al nuevo controlador
+    // Obtener el controlador de la nueva vista y pasar la instancia de partida
+    NewRoundController controller = fxmlLoader.getController();
+    controller.setPartida(partida);
 
+    // Cambiar la escena en la misma ventana
     Stage stage = (Stage) threePlayersButton.getScene().getWindow();
     stage.setScene(scene);
   }
-
-
 }
