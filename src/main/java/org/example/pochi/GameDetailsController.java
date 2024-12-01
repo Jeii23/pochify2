@@ -25,6 +25,10 @@ public class GameDetailsController {
   private Label roundTypeLabel;
 
   @FXML
+  private Label roundCardsLabel;
+
+
+  @FXML
   private ListView<String> playersListView;
 
   @FXML
@@ -45,6 +49,8 @@ public class GameDetailsController {
 
     roundNumberLabel.setText("Número de ronda: " + rondaActual + "/" + rondaTotal);
     roundTypeLabel.setText("Tipus de ronda: " + roundType.toLocalizedString());
+    int numCartes = jugadors.get(0).getnCartes();
+    roundCardsLabel.setText("Número de cartes: " + numCartes);
 
 
     for (int i = 0; i < jugadors.size(); i++) {
