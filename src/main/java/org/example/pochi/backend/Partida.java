@@ -171,5 +171,29 @@ public class Partida {
     public void setAposta(int jugador,int aposta){
         jugadors.get(jugador).setApostaActual(aposta);
     }
+
+    public Vector<Jugador> getJugadorsEnOrdre() {
+        Vector<Jugador> jugadorsOrdenats = new Vector<>();
+        for (int i = 0; i < nJugadors; i++) {
+            int index = (jugadorInicial - 1 + i) % nJugadors;
+            jugadorsOrdenats.add(jugadors.get(index));
+        }
+        return jugadorsOrdenats;
+    }
+
+    public void avançarJugadorInicial() {
+        jugadorInicial = (jugadorInicial % nJugadors) + 1; // Cicles de 1 a nJugadors
+    }
+
+    public boolean comprovaAposta() {
+        int totalApostes = 0;
+        for (Jugador jugador : jugadors) {
+            totalApostes += jugador.getApostaActual();
+        }
+        int numCartes = jugadors.get(0).getnCartes(); // Suposem que tots tenen el mateix nombre de cartes
+        return totalApostes != numCartes;
+    }
+
+
 }
 
