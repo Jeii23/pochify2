@@ -143,4 +143,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Note: Replace placeholders like `[Your Name]` and `your.email@example.com` with your actual information.*
