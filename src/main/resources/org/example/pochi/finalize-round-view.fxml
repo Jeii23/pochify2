@@ -4,7 +4,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-
+<!--
+finalize-round-view.fxml
+-->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.FinalizeRoundController"
       spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
       prefWidth="500" prefHeight="600">
