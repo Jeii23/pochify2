@@ -167,5 +167,9 @@ public class Partida {
         calcularTipusRonda();
         jugadorInicial=(jugadorInicial+1)%nJugadors;
     }
+
+    public void setAposta(int jugador,int aposta){
+        jugadors.get(jugador).setApostaActual(aposta);
+    }
 }
 
