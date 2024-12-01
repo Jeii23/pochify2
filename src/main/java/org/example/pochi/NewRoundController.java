@@ -31,8 +31,7 @@ public class NewRoundController {
 
     // Lógica hardcodeada de actualización de apuestas
     // Ejemplo: partida.setApuestas(apuestaArray);
-    System.out.println("Nuevas apuestas: " + apuestas);
-
+    System.out.println("Noves apostes: " + apuestas);
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("game-details-view.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 400, 300);
 

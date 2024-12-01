@@ -8,7 +8,6 @@ module org.example.pochi {
   requires net.synedra.validatorfx;
   requires org.kordamp.ikonli.javafx;
   requires org.kordamp.bootstrapfx.core;
-  requires eu.hansolo.tilesfx;
 
   opens org.example.pochi to javafx.fxml;
   exports org.example.pochi.backend;
