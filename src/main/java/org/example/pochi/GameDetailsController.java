@@ -42,12 +42,12 @@ public class GameDetailsController {
     Vector<Jugador> jugadors = partida.getJugadors();
 
     roundNumberLabel.setText("Número de ronda: " + rondaActual + "/" + rondaTotal);
-    roundTypeLabel.setText("Tipo de ronda: " + roundType.toLocalizedString());
+    roundTypeLabel.setText("Tipus de ronda: " + roundType.toLocalizedString());
 
     for (int i = 0; i < jugadors.size(); i++) {
       String playerInfo = jugadors.get(i).getNom()
-          + " - Puntuación: " + jugadors.get(i).getPuntuacioTotal()
-          + " - Apuesta: " + jugadors.get(i).getApostaActual();
+          + " - Puntuació: " + jugadors.get(i).getPuntuacioTotal()
+          + " - Aposta: " + jugadors.get(i).getApostaActual();
       playersListView.getItems().add(playerInfo);
     }
   }

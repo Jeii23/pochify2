@@ -6,7 +6,7 @@
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.GameDetailsController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
     <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
-    <Label fx:id="roundTypeLabel" text="Tipo de ronda: "/>
+    <Label fx:id="roundTypeLabel" text="Tipus de ronda: "/>
     <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"/>
-    <Button fx:id="finalizeRoundButton" text="Finalizar Ronda" onAction="#onFinalizeRoundClick"/>
+    <Button fx:id="finalizeRoundButton" text="Finalitzar Ronda" onAction="#onFinalizeRoundClick"/>
 </VBox>
