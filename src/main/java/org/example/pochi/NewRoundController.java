@@ -39,6 +39,7 @@ public class NewRoundController {
 
     // Mostrar el primer jugador per fer la seva aposta
     mostrarJugadorActual();
+    partida.passarRonda();
   }
 
 

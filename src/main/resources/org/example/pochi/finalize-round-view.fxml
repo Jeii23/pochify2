@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.FinalizeRoundController"
       spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label fx:id="jugadorLabel" text="Encerts de Jugador 1"/>
-    <TextField fx:id="roundInputField" promptText="Introdueix els encerts"/>
-    <Button fx:id="finalizeButton" text="OK" onAction="#onFinalizeClick"/>
+    <TextField fx:id="roundInputField" promptText="Número d'encerts"/>
+    <Button fx:id="finalizeButton" text="Finalitzar" onAction="#onFinalizeClick"/>
 </VBox>

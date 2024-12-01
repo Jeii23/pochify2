@@ -46,6 +46,7 @@ public class GameDetailsController {
     roundNumberLabel.setText("Número de ronda: " + rondaActual + "/" + rondaTotal);
     roundTypeLabel.setText("Tipus de ronda: " + roundType.toLocalizedString());
 
+
     for (int i = 0; i < jugadors.size(); i++) {
       String playerInfo = jugadors.get(i).getNom()
           + " - Puntuació: " + jugadors.get(i).getPuntuacioTotal()

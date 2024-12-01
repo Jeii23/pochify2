@@ -22,7 +22,7 @@ public class Partida {
         this.cartesTotals=calcularNCartes(nJugadors);
         this.nRondes=calcularNRondes(nJugadors);
         this.tipusRonda=TipusRonda.BASIC;
-        this.rondaActual=1;
+        this.rondaActual=0;
         this.jugadorInicial=1;
     }
 
@@ -192,6 +192,9 @@ public class Partida {
         }
         int numCartes = jugadors.get(0).getnCartes(); // Suposem que tots tenen el mateix nombre de cartes
         return totalApostes != numCartes;
+    }
+    public void passarRonda(){
+        rondaActual++;
     }
 
 
