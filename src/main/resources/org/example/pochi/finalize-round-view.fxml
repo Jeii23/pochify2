@@ -5,11 +5,28 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
+<!-- finalize-round-view.fxml -->
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.FinalizeRoundController"
       spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
       prefWidth="500" prefHeight="600">
 
-    <Label fx:id="jugadorLabel" text="Aposta per: "/> <!-- Assegura't que té aquest fx:id -->
-    <TextField fx:id="roundInputField" promptText="Introdueix el número d'encerts"/>
-    <Button fx:id="finalizeButton" text="Finalitzar" onAction="#onFinalizeClick"/>
+    <!-- Título -->
+    <Label text="LA POCHA"
+           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
+    <Label text="Finalitza la Ronda"
+           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+
+    <!-- Información del jugador -->
+    <Label fx:id="jugadorLabel" text="Aposta per: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+
+    <!-- Campo de entrada -->
+    <TextField fx:id="roundInputField" promptText="Introdueix el número d'encerts"
+               style="-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: #BA55D3; -fx-border-radius: 5;
+                      -fx-background-radius: 5; -fx-pref-width: 250px;"/>
+
+    <!-- Botón de finalizar -->
+    <Button fx:id="finalizeButton" text="Finalitzar" onAction="#onFinalizeClick"
+            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
+                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 150px; -fx-pref-height: 40px;"/>
 </VBox>

@@ -14,7 +14,7 @@ public class GameApplication extends Application {
     Scene scene = new Scene(fxmlLoader.load(), 500, 600);
     stage.setTitle("Pochify");
     stage.setScene(scene);
-    stage.setResizable(false);
+
     stage.show();
   }
 
