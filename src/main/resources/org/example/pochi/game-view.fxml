@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <!-- game-view.fxml -->
 
-
-
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.pochi.GameController"
-      spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
-      prefWidth="500" prefHeight="600">
+<VBox alignment="CENTER" prefHeight="600" prefWidth="500" spacing="20" style="-fx-padding: 30; -fx-background-color: #F8E8F9;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="org.example.pochi.GameController">
     <!-- Títulos -->
-    <Label text="LA POCHA"
-           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
-    <Label text="Nova partida"
-           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+    <Label style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;" text="LA POCHA">
+      <font>
+         <Font name="Bell MT" size="8.0" />
+      </font></Label>
+    <Label style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;" text="Nova partida" />
 
     <!-- Botones -->
-    <Button fx:id="threePlayersButton" text="3 jugadors" onAction="#onThreePlayersClick"
-            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
-                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;"/>
-    <Button fx:id="fourPlayersButton" text="4 jugadors" onAction="#onFourPlayersClick"
-            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
-                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;"/>
-    <Button fx:id="fivePlayersButton" text="5 jugadors" onAction="#onFivePlayersClick"
-            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
-                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;"/>
+    <Button fx:id="threePlayersButton" onAction="#onThreePlayersClick" style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;                    -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;" text="3 jugadors" />
+    <Button fx:id="fourPlayersButton" onAction="#onFourPlayersClick" style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;                    -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;" text="4 jugadors" />
+    <Button fx:id="fivePlayersButton" onAction="#onFivePlayersClick" style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;                    -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 50px;" text="5 jugadors" />
 
 </VBox>

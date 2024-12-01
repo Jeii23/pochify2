@@ -10,9 +10,27 @@
       spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: #F8E8F9;"
       prefWidth="500" prefHeight="600">
 
-    <Label fx:id="roundNumberLabel" text="Número de ronda: "/>
-    <Label fx:id="roundTypeLabel" text="Tipus de ronda: "/>
-    <Label fx:id="roundCardsLabel" text="Número de cartes: "/> <!-- Nou Label -->
-    <ListView fx:id="playersListView" prefHeight="200" prefWidth="300"/>
-    <Button fx:id="finalizeRoundButton" text="Finalitzar Ronda" onAction="#onFinalizeRoundClick"/>
+    <!-- Título -->
+    <Label text="LA POCHA"
+           style="-fx-font-size: 36px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: bold; -fx-text-fill: #8A2BE2;"/>
+    <Label text="Detalls de la partida"
+           style="-fx-font-size: 20px; -fx-font-family: 'Trebuchet MS'; -fx-font-weight: normal; -fx-text-fill: #BA55D3;"/>
+
+    <!-- Información de la ronda -->
+    <Label fx:id="roundNumberLabel" text="Número de ronda: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+    <Label fx:id="roundTypeLabel" text="Tipus de ronda: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+    <Label fx:id="roundCardsLabel" text="Número de cartes: "
+           style="-fx-font-size: 16px; -fx-font-family: 'Trebuchet MS'; -fx-text-fill: #8A2BE2;"/>
+
+    <!-- Lista de jugadores estilizada -->
+    <ListView fx:id="playersListView" prefHeight="250" prefWidth="320"
+              style="-fx-background-color: #FFFFFF; -fx-border-color: #BA55D3; -fx-border-width: 2;
+                     -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 10;"/>
+
+    <!-- Botón para finalizar ronda -->
+    <Button fx:id="finalizeRoundButton" text="Finalitzar Ronda" onAction="#onFinalizeRoundClick"
+            style="-fx-font-size: 16px; -fx-background-color: #DDA0DD; -fx-text-fill: white; -fx-border-color: #BA55D3;
+                   -fx-border-radius: 10; -fx-background-radius: 10; -fx-pref-width: 200px; -fx-pref-height: 40px;"/>
 </VBox>
