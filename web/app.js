@@ -2,6 +2,7 @@
     "use strict";
 
     const { GameEngine, ROUND_TYPE_LABELS } = window.PochifyCore;
+    const Storage = window.PochifyStorage;
 
     const root = document.querySelector("#app");
 
@@ -218,11 +219,12 @@
                     <span>Copa</span>
                 </span>
             </div>
-            ${renderServerRanking()}
+            ${renderLocalRanking()}
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="continue">Continue</button>
                 <button class="secondary-button" type="button" data-action="load-game">Load saved game</button>
                 <button class="secondary-button" type="button" data-action="open-statistics">Statistics</button>
+                <button class="secondary-button" type="button" data-action="clear-saved-game">Clear saved game</button>
             </div>
         `;
     }
@@ -436,10 +438,10 @@
             <section class="score-list">
                 ${ranking.map((player, index) => renderScoreRow(player, index + 1, "Final score")).join("")}
             </section>
-            ${renderServerRanking()}
+            ${renderLocalRanking()}
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="restart">New game</button>
-                <button class="secondary-button" type="button" data-action="submit-ranking">Update server ranking</button>
+                <button class="secondary-button" type="button" data-action="submit-ranking">Update statistics</button>
                 <button class="secondary-button" type="button" data-action="open-statistics">View statistics</button>
             </div>
         `;
@@ -450,11 +452,11 @@
         const players = ranking && Array.isArray(ranking.players) ? ranking.players : [];
 
         return `
-            ${renderHeader("Statistics", "Server ranking and player records.")}
+            ${renderHeader("Statistics", "Local player records.")}
             ${players.length === 0 ? `
                 <section class="empty-panel">
                     <h2>No games recorded yet</h2>
-                    <p>Finish a game and Pochify will add it to the server ranking automatically.</p>
+                    <p>Finish a game and Pochify will add it to this browser automatically.</p>
                 </section>
             ` : `
                 <section class="stats-summary">
@@ -468,6 +470,7 @@
             `}
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="refresh-statistics">Refresh statistics</button>
+                <button class="secondary-button" type="button" data-action="reset-statistics">Reset statistics</button>
                 <button class="secondary-button" type="button" data-action="close-statistics">Back</button>
             </div>
         `;
@@ -504,7 +507,7 @@
         `;
     }
 
-    function renderServerRanking() {
+    function renderLocalRanking() {
         const ranking = state.ranking;
         if (!ranking || !Array.isArray(ranking.players) || ranking.players.length === 0) {
             return "";
@@ -513,7 +516,7 @@
         return `
             <section class="ranking-panel">
                 <div class="section-title-row">
-                    <h2>Server ranking</h2>
+                    <h2>Local ranking</h2>
                     <span>${ranking.gamesRecorded || 0} games</span>
                 </div>
                 <div class="ranking-list">
@@ -687,19 +690,22 @@
                 startGame();
                 return;
             } else if (action === "save-game") {
-                await saveGameToServer();
+                saveGameLocally();
                 return;
             } else if (action === "load-game") {
-                await loadGameFromServer();
+                loadGameLocally();
                 return;
-            } else if (action === "load-ranking") {
-                await refreshRankingFromServer();
+            } else if (action === "clear-saved-game") {
+                clearSavedGame();
                 return;
             } else if (action === "open-statistics") {
-                await openStatistics();
+                openStatistics();
                 return;
             } else if (action === "refresh-statistics") {
-                await refreshRankingFromServer({ notice: "Statistics refreshed." });
+                refreshRankingFromStorage({ notice: "Statistics refreshed." });
+                return;
+            } else if (action === "reset-statistics") {
+                resetStatistics();
                 return;
             } else if (action === "close-statistics") {
                 state.phase = state.statsReturnPhase || "welcome";
@@ -726,7 +732,7 @@
                 await completeRound();
                 return;
             } else if (action === "submit-ranking") {
-                await submitFinishedGameToServer();
+                submitFinishedGameToLocalRanking();
                 return;
             } else if (action === "next-round") {
                 state.activeRound = state.engine.beginNextRound();
@@ -814,7 +820,7 @@
         render();
 
         if (state.engine.isFinished) {
-            await submitFinishedGameToServer();
+            submitFinishedGameToLocalRanking();
         }
     }
 
@@ -864,11 +870,11 @@
             rankingSubmittedGameID: savedState.rankingSubmittedGameID || null,
             statsReturnPhase: state.statsReturnPhase,
             ranking: state.ranking,
-            noticeMessage: "Saved game loaded from server."
+            noticeMessage: "Saved game loaded from this browser."
         };
     }
 
-    async function saveGameToServer() {
+    function saveGameLocally() {
         if (!state.engine) {
             state.errorMessage = "Start a game before saving.";
             state.noticeMessage = null;
@@ -876,51 +882,54 @@
             return;
         }
 
-        const response = await fetch("/api/save", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(makeSavePayload())
-        });
+        const result = Storage.saveLatestGame(makeSavePayload());
 
-        if (!response.ok) {
-            throw new Error(await responseTextOrDefault(response, "Could not save game on server."));
-        }
-
-        state.errorMessage = null;
-        state.noticeMessage = "Game saved on server.";
+        state.errorMessage = result.ok ? null : result.message;
+        state.noticeMessage = result.ok ? result.message : null;
         render();
     }
 
-    async function openStatistics() {
+    function clearSavedGame() {
+        if (!window.confirm("Clear the saved game from this browser?")) {
+            return;
+        }
+
+        const result = Storage.clearLatestGame();
+        state.errorMessage = result.ok ? null : result.message;
+        state.noticeMessage = result.ok ? result.message : null;
+        render();
+    }
+
+    function openStatistics() {
         state.statsReturnPhase = state.phase === "statistics" ? "welcome" : state.phase;
-        await refreshRankingFromServer({
+        refreshRankingFromStorage({
             nextPhase: "statistics",
             notice: null
         });
     }
 
-    async function loadGameFromServer() {
-        if (state.engine && !window.confirm("Load the server save and replace the current game?")) {
+    function loadGameLocally() {
+        if (state.engine && !window.confirm("Load the saved game from this browser and replace the current game?")) {
             return;
         }
 
-        const response = await fetch("/api/save");
+        const result = Storage.loadLatestGame();
 
-        if (response.status === 404) {
-            state.errorMessage = "There is no saved game on this server yet.";
+        if (!result.ok) {
+            state.errorMessage = result.message;
             state.noticeMessage = null;
             render();
             return;
         }
 
-        if (!response.ok) {
-            throw new Error(await responseTextOrDefault(response, "Could not load saved game."));
+        if (!result.payload) {
+            state.errorMessage = "There is no saved game in this browser yet.";
+            state.noticeMessage = null;
+            render();
+            return;
         }
 
-        const payload = await response.json();
-        state = hydrateSavedState(payload.state || payload);
+        state = hydrateSavedState(result.payload.state || result.payload);
         render();
     }
 
@@ -938,75 +947,65 @@
         };
     }
 
-    async function submitFinishedGameToServer() {
+    function submitFinishedGameToLocalRanking() {
         if (!state.engine || !state.engine.isFinished) {
-            state.errorMessage = "Finish the game before updating the ranking.";
+            state.errorMessage = "Finish the game before updating statistics.";
             state.noticeMessage = null;
             render();
             return;
         }
 
         if (state.rankingSubmittedGameID === state.gameID && state.ranking) {
-            state.noticeMessage = "This game is already in the server ranking.";
+            state.noticeMessage = "This game is already in local statistics.";
             state.errorMessage = null;
             render();
             return;
         }
 
-        const response = await fetch("/api/ranking/game", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(makeFinishedGamePayload())
-        });
+        const result = Storage.recordFinishedGame(makeFinishedGamePayload());
 
-        if (!response.ok) {
-            throw new Error(await responseTextOrDefault(response, "Could not update server ranking."));
-        }
-
-        const payload = await response.json();
-        state.ranking = payload.ranking;
-        state.rankingSubmittedGameID = state.gameID;
-        state.errorMessage = null;
-        state.noticeMessage = payload.recorded
-            ? "Server ranking updated."
-            : "This game was already counted on the server.";
+        state.ranking = result.ranking;
+        state.rankingSubmittedGameID = result.ok ? state.gameID : state.rankingSubmittedGameID;
+        state.errorMessage = result.ok ? null : result.message;
+        state.noticeMessage = result.ok
+            ? result.message
+            : null;
         render();
     }
 
-    async function refreshRankingFromServer(options = {}) {
-        const response = await fetch("/api/ranking");
+    function refreshRankingFromStorage(options = {}) {
+        const result = Storage.loadRanking();
+        state.ranking = result.ranking;
 
-        if (!response.ok) {
-            if (!options.silent) {
-                throw new Error(await responseTextOrDefault(response, "Could not load server ranking."));
-            }
-            return;
-        }
-
-        state.ranking = await response.json();
         if (options.nextPhase) {
             state.phase = options.nextPhase;
         }
+
         if (!options.silent) {
-            state.errorMessage = null;
-            state.noticeMessage = options.notice === undefined
-                ? "Server ranking refreshed."
-                : options.notice;
+            state.errorMessage = result.ok ? null : result.message;
+            state.noticeMessage = result.ok
+                ? options.notice === undefined
+                    ? "Statistics refreshed."
+                    : options.notice
+                : null;
         }
+
         render();
     }
 
-    async function responseTextOrDefault(response, fallback) {
-        try {
-            const payload = await response.json();
-            return payload.message || fallback;
-        } catch (error) {
-            return fallback;
+    function resetStatistics() {
+        if (!window.confirm("Reset all local statistics in this browser?")) {
+            return;
         }
+
+        const result = Storage.resetRanking();
+        state.ranking = result.ranking;
+        state.rankingSubmittedGameID = null;
+        state.errorMessage = result.ok ? null : result.message;
+        state.noticeMessage = result.ok ? result.message : null;
+        render();
     }
 
     render();
-    refreshRankingFromServer({ silent: true }).catch(() => {});
+    refreshRankingFromStorage({ silent: true });
 })();

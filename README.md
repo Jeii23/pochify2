@@ -121,10 +121,11 @@ Pochify is a JavaFX-based implementation of the traditional Spanish card game **
 - **`web/`**: Mobile-first static web port based on the SwiftUI flow.
   - `index.html`: Browser entry point.
   - `game-core.js`: JavaScript port of the iOS `PochifyCore` rules.
+  - `storage.js`: Browser `localStorage` save/statistics helpers.
   - `app.js` and `styles.css`: Touch-friendly web interface.
-  - `server.py`: Static web server plus APIs for the latest saved game and accumulated ranking stats.
+  - `server.py`: Legacy/deprecated local static server with old save/stat APIs. It is not required by the current web app.
   - `game-core.test.js`: Node-based regression tests for the web rules.
-  - `server.test.py`: Python tests for the server-side save slot.
+  - `storage.test.js`: Node-based tests for local browser persistence and statistics.
 
 ## Native iOS SwiftUI Port
 
@@ -210,39 +211,47 @@ swift test
 
 A mobile web version now lives in **`web/`**. It adapts the iOS SwiftUI flow for a phone browser: large touch targets, safe-area spacing, sticky primary actions, and the same bidding, tricks, rotation, scoring, and final-ranking rules as the Swift core.
 
-The web server also supports saving a game midway and loading it later. Saves are stored on the server, not in the browser, and only the latest save is kept. Each save overwrites:
+The web version is fully static. It does not require Python, Node, Flask, FastAPI, or any backend server at runtime. Saving, loading, and statistics are stored in the current browser with `localStorage`.
 
-```text
-web/server_data/latest-game.json
-```
+The latest saved game uses the `pochify.latestGame` storage key. The accumulated statistics use the `pochify.ranking` storage key.
 
-When a game finishes, the browser sends the final result to the server. The server updates an accumulated ranking in:
+The ranking keeps wins per player across games and round/game statistics such as best final score, worst final score, best points gained in one round, worst points lost in one round, average final score, games played, rounds played, win rate, best winning margin, and last recorded game. Finished games include a `gameID`, so re-recording the same final result in the same browser does not count it twice.
 
-```text
-web/server_data/ranking.json
-```
+The web UI exposes those records through the **Statistics** button. It opens a mobile-friendly statistics screen with the local ranking and each player's win rate, game totals, round totals, best/worst game score, best/worst round score, best winning margin, and last recorded game.
 
-The ranking keeps wins per player across games and round/game statistics such as best final score, best points gained in one round, worst points lost in one round, average final score, games played, and rounds played. Finished games include a `gameID`, so re-sending the same final result does not count it twice.
-
-The web UI exposes those records through the **Statistics** button. It opens a mobile-friendly statistics screen with the full server ranking and each player's win rate, game totals, round totals, best/worst game score, best/worst round score, best winning margin, and last recorded game.
+Because this data lives in `localStorage`, it is per browser and per device. It is not shared globally and will be removed if the user clears site data.
 
 ### How to open locally
 
-Run the included server so save/load works:
+Open the static entry point directly:
 
 ```bash
-python3 web/server.py --host 0.0.0.0 --port 8000
+xdg-open web/index.html
 ```
 
-Then open `http://<computer-ip>:8000` on the phone.
+You can also serve the folder with any static server:
 
-Opening `web/index.html` directly or serving it with `python3 -m http.server` can show the interface, but server-side save/load requires `web/server.py`.
+```bash
+python3 -m http.server 8000 --directory web
+```
+
+Then open `http://localhost:8000`.
+
+The old `web/server.py` remains only as a legacy/deprecated local helper. The current web app does not call its APIs.
+
+### Cloudflare Pages
+
+Use these settings:
+
+- Project root: repository root
+- Build command: none, or `exit 0`
+- Build output directory: `web`
 
 ### Web test command
 
 ```bash
 node web/game-core.test.js
-python3 web/server.test.py
+node web/storage.test.js
 ```
 
 ## Technologies Used

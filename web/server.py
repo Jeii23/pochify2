@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Static Pochify web server with one server-side save slot."""
+"""Legacy Pochify web server with deprecated server-side save/stat APIs.
+
+The active web app is fully static and stores saves/statistics in browser
+localStorage. This file is kept only as an old local static-file helper/API.
+"""
 
 from __future__ import annotations
 
