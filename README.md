@@ -122,7 +122,9 @@ Pochify is a JavaFX-based implementation of the traditional Spanish card game **
   - `index.html`: Browser entry point.
   - `game-core.js`: JavaScript port of the iOS `PochifyCore` rules.
   - `app.js` and `styles.css`: Touch-friendly web interface.
+  - `server.py`: Static web server plus APIs for the latest saved game and accumulated ranking stats.
   - `game-core.test.js`: Node-based regression tests for the web rules.
+  - `server.test.py`: Python tests for the server-side save slot.
 
 ## Native iOS SwiftUI Port
 
@@ -206,22 +208,41 @@ swift test
 
 ## Mobile Web Port
 
-A static mobile web version now lives in **`web/`**. It adapts the iOS SwiftUI flow for a phone browser: large touch targets, safe-area spacing, sticky primary actions, local game restore with `localStorage`, and the same bidding, tricks, rotation, scoring, and final-ranking rules as the Swift core.
+A mobile web version now lives in **`web/`**. It adapts the iOS SwiftUI flow for a phone browser: large touch targets, safe-area spacing, sticky primary actions, and the same bidding, tricks, rotation, scoring, and final-ranking rules as the Swift core.
+
+The web server also supports saving a game midway and loading it later. Saves are stored on the server, not in the browser, and only the latest save is kept. Each save overwrites:
+
+```text
+web/server_data/latest-game.json
+```
+
+When a game finishes, the browser sends the final result to the server. The server updates an accumulated ranking in:
+
+```text
+web/server_data/ranking.json
+```
+
+The ranking keeps wins per player across games and round/game statistics such as best final score, best points gained in one round, worst points lost in one round, average final score, games played, and rounds played. Finished games include a `gameID`, so re-sending the same final result does not count it twice.
+
+The web UI exposes those records through the **Statistics** button. It opens a mobile-friendly statistics screen with the full server ranking and each player's win rate, game totals, round totals, best/worst game score, best/worst round score, best winning margin, and last recorded game.
 
 ### How to open locally
 
-You can open `web/index.html` directly in a browser. To test it from a phone on the same network, serve the folder with any static server, for example:
+Run the included server so save/load works:
 
 ```bash
-python3 -m http.server 8000 -d web
+python3 web/server.py --host 0.0.0.0 --port 8000
 ```
 
 Then open `http://<computer-ip>:8000` on the phone.
+
+Opening `web/index.html` directly or serving it with `python3 -m http.server` can show the interface, but server-side save/load requires `web/server.py`.
 
 ### Web test command
 
 ```bash
 node web/game-core.test.js
+python3 web/server.test.py
 ```
 
 ## Technologies Used

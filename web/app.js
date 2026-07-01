@@ -2,7 +2,6 @@
     "use strict";
 
     const { GameEngine, ROUND_TYPE_LABELS } = window.PochifyCore;
-    const STORAGE_KEY = "pochify-web-state-v1";
 
     const root = document.querySelector("#app");
 
@@ -11,50 +10,31 @@
         selectedPlayerCount: 3,
         playerNames: defaultNames(3),
         engine: null,
+        gameID: null,
         activeRound: null,
         biddingIndex: 0,
         bidDraft: 0,
         tricksDrafts: {},
-        errorMessage: null
+        roundHistory: [],
+        ranking: null,
+        rankingSubmittedGameID: null,
+        statsReturnPhase: "welcome",
+        errorMessage: null,
+        noticeMessage: null
     });
 
-    let state = loadState();
+    let state = defaultState();
 
     function defaultNames(count) {
         return Array.from({ length: count }, (_, index) => `Player ${index + 1}`);
     }
 
-    function loadState() {
-        try {
-            const raw = window.localStorage.getItem(STORAGE_KEY);
-            if (!raw) {
-                return defaultState();
-            }
-
-            const snapshot = JSON.parse(raw);
-            const loaded = {
-                ...defaultState(),
-                ...snapshot,
-                engine: snapshot.engine ? GameEngine.fromSnapshot(snapshot.engine) : null,
-                errorMessage: null
-            };
-
-            loaded.activeRound = loaded.engine ? loaded.engine.activeRound : null;
-            return loaded;
-        } catch (error) {
-            console.warn("Could not restore Pochify state", error);
-            return defaultState();
+    function createClientID() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+            return window.crypto.randomUUID();
         }
-    }
 
-    function saveState() {
-        const snapshot = {
-            ...state,
-            engine: state.engine ? state.engine.toSnapshot() : null,
-            errorMessage: null
-        };
-
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+        return `game-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
     }
 
     function escapeHTML(value) {
@@ -137,7 +117,8 @@
             roundDetails: renderRoundDetails,
             tricksInput: renderTricksInput,
             scores: renderScores,
-            finalRanking: renderFinalRanking
+            finalRanking: renderFinalRanking,
+            statistics: renderStatisticsView
         }[state.phase] || renderWelcome;
 
         root.innerHTML = `
@@ -151,7 +132,6 @@
         `;
 
         bindInputs();
-        saveState();
     }
 
     function renderTopBar() {
@@ -172,6 +152,7 @@
                 <div class="top-actions">
                     <span class="round-pill">${escapeHTML(roundText)}</span>
                     ${showGameActions ? `
+                        <button class="utility-button" type="button" data-action="save-game">Save</button>
                         <button class="icon-button" type="button" data-action="restart-confirm" aria-label="New game">
                             <svg aria-hidden="true" viewBox="0 0 24 24">
                                 <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
@@ -211,12 +192,37 @@
                 </div>
             </section>
             <div class="visual-table" aria-hidden="true">
-                <span class="mini-card red-card">A</span>
-                <span class="mini-card">K</span>
-                <span class="mini-card gold-card">Q</span>
+                <span class="mini-card suit-card gold-card">
+                    <svg viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="16"/>
+                        <circle cx="32" cy="32" r="7"/>
+                    </svg>
+                    <span>Oro</span>
+                </span>
+                <span class="mini-card suit-card sword-card">
+                    <svg viewBox="0 0 64 64">
+                        <path d="M34 8l6 6-19 28-5 1 1-5z"/>
+                        <path d="M20 42l-8 8"/>
+                        <path d="M17 34l13 13"/>
+                    </svg>
+                    <span>Espasa</span>
+                </span>
+                <span class="mini-card suit-card red-card">
+                    <svg viewBox="0 0 64 64">
+                        <path d="M20 14h24l-4 25a8 8 0 0 1-16 0z"/>
+                        <path d="M25 50h14"/>
+                        <path d="M32 45v5"/>
+                        <path d="M20 18c-6 1-8 5-7 10 1 4 4 7 10 8"/>
+                        <path d="M44 18c6 1 8 5 7 10-1 4-4 7-10 8"/>
+                    </svg>
+                    <span>Copa</span>
+                </span>
             </div>
+            ${renderServerRanking()}
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="continue">Continue</button>
+                <button class="secondary-button" type="button" data-action="load-game">Load saved game</button>
+                <button class="secondary-button" type="button" data-action="open-statistics">Statistics</button>
             </div>
         `;
     }
@@ -430,8 +436,39 @@
             <section class="score-list">
                 ${ranking.map((player, index) => renderScoreRow(player, index + 1, "Final score")).join("")}
             </section>
+            ${renderServerRanking()}
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="restart">New game</button>
+                <button class="secondary-button" type="button" data-action="submit-ranking">Update server ranking</button>
+                <button class="secondary-button" type="button" data-action="open-statistics">View statistics</button>
+            </div>
+        `;
+    }
+
+    function renderStatisticsView() {
+        const ranking = state.ranking;
+        const players = ranking && Array.isArray(ranking.players) ? ranking.players : [];
+
+        return `
+            ${renderHeader("Statistics", "Server ranking and player records.")}
+            ${players.length === 0 ? `
+                <section class="empty-panel">
+                    <h2>No games recorded yet</h2>
+                    <p>Finish a game and Pochify will add it to the server ranking automatically.</p>
+                </section>
+            ` : `
+                <section class="stats-summary">
+                    ${renderStat("Games", ranking.gamesRecorded || 0)}
+                    ${renderStat("Players", players.length)}
+                    ${renderStat("Updated", formatDateTime(ranking.updatedAt))}
+                </section>
+                <section class="ranking-list full">
+                    ${players.map((player, index) => renderStatisticsCard(player, index + 1)).join("")}
+                </section>
+            `}
+            <div class="action-bar">
+                <button class="primary-button" type="button" data-action="refresh-statistics">Refresh statistics</button>
+                <button class="secondary-button" type="button" data-action="close-statistics">Back</button>
             </div>
         `;
     }
@@ -467,6 +504,104 @@
         `;
     }
 
+    function renderServerRanking() {
+        const ranking = state.ranking;
+        if (!ranking || !Array.isArray(ranking.players) || ranking.players.length === 0) {
+            return "";
+        }
+
+        return `
+            <section class="ranking-panel">
+                <div class="section-title-row">
+                    <h2>Server ranking</h2>
+                    <span>${ranking.gamesRecorded || 0} games</span>
+                </div>
+                <div class="ranking-list">
+                    ${ranking.players.slice(0, 8).map((player, index) => `
+                        <article class="ranking-card">
+                            <div class="ranking-main">
+                                <span class="rank-badge">${index + 1}</span>
+                                <div>
+                                    <h3>${escapeHTML(player.name)}</h3>
+                                    <p>${player.wins} wins · ${player.gamesPlayed} games</p>
+                                </div>
+                            </div>
+                            <div class="stat-grid">
+                                ${renderStat("Best game", player.bestGameScore)}
+                                ${renderStat("Best round", player.bestRoundGain)}
+                                ${renderStat("Worst round", player.worstRoundLoss)}
+                                ${renderStat("Avg game", player.averageFinalScore)}
+                            </div>
+                        </article>
+                    `).join("")}
+                </div>
+            </section>
+        `;
+    }
+
+    function renderStatisticsCard(player, rank) {
+        return `
+            <article class="ranking-card statistics-card">
+                <div class="ranking-main">
+                    <span class="rank-badge">${rank}</span>
+                    <div>
+                        <h3>${escapeHTML(player.name)}</h3>
+                        <p>${player.wins} wins · ${player.gamesPlayed} games · ${formatPercent(player.winRate)} win rate</p>
+                    </div>
+                </div>
+                <div class="stat-grid detailed">
+                    ${renderStat("Wins", player.wins)}
+                    ${renderStat("Games", player.gamesPlayed)}
+                    ${renderStat("Rounds", player.roundsPlayed)}
+                    ${renderStat("Win rate", formatPercent(player.winRate))}
+                    ${renderStat("Best game", player.bestGameScore)}
+                    ${renderStat("Worst game", player.worstGameScore)}
+                    ${renderStat("Avg game", player.averageFinalScore)}
+                    ${renderStat("Last game", player.lastGameScore)}
+                    ${renderStat("Best round", player.bestRoundGain)}
+                    ${renderStat("Worst round", player.worstRoundLoss)}
+                    ${renderStat("Best margin", player.bestWinningMargin)}
+                    ${renderStat("Last played", formatDateTime(player.lastPlayedAt))}
+                </div>
+            </article>
+        `;
+    }
+
+    function renderStat(label, value) {
+        return `
+            <span class="stat-chip">
+                <small>${escapeHTML(label)}</small>
+                <strong>${value === null || value === undefined ? "-" : escapeHTML(value)}</strong>
+            </span>
+        `;
+    }
+
+    function formatPercent(value) {
+        if (typeof value !== "number") {
+            return "-";
+        }
+
+        return `${Math.round(value * 100)}%`;
+    }
+
+    function formatDateTime(value) {
+        if (!value) {
+            return "-";
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+
+        return date.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
     function renderStepper(label, value, min, max, actionPrefix, playerID) {
         const playerAttribute = playerID ? `data-player-id="${escapeHTML(playerID)}"` : "";
 
@@ -492,13 +627,16 @@
     }
 
     function renderError() {
-        if (!state.errorMessage) {
+        const message = state.errorMessage || state.noticeMessage;
+        if (!message) {
             return "";
         }
 
+        const type = state.errorMessage ? "error" : "notice";
+
         return `
-            <div class="toast" role="alert">
-                <p>${escapeHTML(state.errorMessage)}</p>
+            <div class="toast ${type}" role="alert">
+                <p>${escapeHTML(message)}</p>
                 <button type="button" data-action="dismiss-error">OK</button>
             </div>
         `;
@@ -509,7 +647,6 @@
             input.addEventListener("input", (event) => {
                 const index = Number(event.currentTarget.dataset.playerName);
                 state.playerNames[index] = event.currentTarget.value;
-                saveState();
             });
 
             input.addEventListener("keydown", (event) => {
@@ -530,7 +667,7 @@
         });
     }
 
-    root.addEventListener("click", (event) => {
+    root.addEventListener("click", async (event) => {
         const control = event.target.closest("[data-action]");
         if (!control || control.disabled) {
             return;
@@ -549,6 +686,23 @@
             } else if (action === "start-game") {
                 startGame();
                 return;
+            } else if (action === "save-game") {
+                await saveGameToServer();
+                return;
+            } else if (action === "load-game") {
+                await loadGameFromServer();
+                return;
+            } else if (action === "load-ranking") {
+                await refreshRankingFromServer();
+                return;
+            } else if (action === "open-statistics") {
+                await openStatistics();
+                return;
+            } else if (action === "refresh-statistics") {
+                await refreshRankingFromServer({ notice: "Statistics refreshed." });
+                return;
+            } else if (action === "close-statistics") {
+                state.phase = state.statsReturnPhase || "welcome";
             } else if (action === "start-bidding") {
                 state.biddingIndex = 0;
                 state.bidDraft = currentBiddingPlayer() ? currentBiddingPlayer().currentBid : 0;
@@ -569,7 +723,10 @@
             } else if (action === "tricks-dec" || action === "tricks-inc") {
                 updateTricks(control.dataset.playerId, action === "tricks-inc" ? 1 : -1);
             } else if (action === "complete-round") {
-                completeRound();
+                await completeRound();
+                return;
+            } else if (action === "submit-ranking") {
+                await submitFinishedGameToServer();
                 return;
             } else if (action === "next-round") {
                 state.activeRound = state.engine.beginNextRound();
@@ -585,9 +742,11 @@
                 }
             } else if (action === "dismiss-error") {
                 state.errorMessage = null;
+                state.noticeMessage = null;
             }
         } catch (error) {
             state.errorMessage = error.message;
+            state.noticeMessage = null;
         }
 
         render();
@@ -597,11 +756,15 @@
         const engine = new GameEngine(state.selectedPlayerCount);
         engine.updatePlayerNames(state.playerNames);
         state.engine = engine;
+        state.gameID = createClientID();
         state.activeRound = engine.beginNextRound();
         state.biddingIndex = 0;
         state.bidDraft = 0;
         state.tricksDrafts = {};
+        state.roundHistory = [];
+        state.rankingSubmittedGameID = null;
         state.errorMessage = null;
+        state.noticeMessage = null;
         state.phase = "roundOverview";
         render();
     }
@@ -637,17 +800,213 @@
         );
     }
 
-    function completeRound() {
-        state.engine.completeRound(state.tricksDrafts);
+    async function completeRound() {
+        const completedRound = state.activeRound;
+        const results = state.engine.completeRound(state.tricksDrafts);
+        state.roundHistory.push({
+            roundNumber: completedRound.roundNumber,
+            roundType: completedRound.roundType,
+            cardsPerPlayer: completedRound.cardsPerPlayer,
+            results
+        });
         state.activeRound = state.engine.activeRound;
         state.phase = state.engine.isFinished ? "finalRanking" : "scores";
         render();
+
+        if (state.engine.isFinished) {
+            await submitFinishedGameToServer();
+        }
     }
 
     function resetGame() {
         state = defaultState();
-        window.localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function makeSavePayload() {
+        return {
+            version: 1,
+            savedAt: new Date().toISOString(),
+            state: {
+                phase: state.phase,
+                selectedPlayerCount: state.selectedPlayerCount,
+                playerNames: state.playerNames,
+                engine: state.engine ? state.engine.toSnapshot() : null,
+                gameID: state.gameID,
+                activeRound: state.engine ? state.engine.activeRound : null,
+                biddingIndex: state.biddingIndex,
+                bidDraft: state.bidDraft,
+                tricksDrafts: state.tricksDrafts,
+                roundHistory: state.roundHistory,
+                rankingSubmittedGameID: state.rankingSubmittedGameID
+            }
+        };
+    }
+
+    function hydrateSavedState(savedState) {
+        const engine = savedState.engine ? GameEngine.fromSnapshot(savedState.engine) : null;
+
+        return {
+            ...defaultState(),
+            phase: savedState.phase || "welcome",
+            selectedPlayerCount: savedState.selectedPlayerCount || 3,
+            playerNames: Array.isArray(savedState.playerNames)
+                ? savedState.playerNames
+                : defaultNames(savedState.selectedPlayerCount || 3),
+            engine,
+            gameID: savedState.gameID || createClientID(),
+            activeRound: engine ? engine.activeRound : null,
+            biddingIndex: Number.isInteger(savedState.biddingIndex) ? savedState.biddingIndex : 0,
+            bidDraft: Number.isInteger(savedState.bidDraft) ? savedState.bidDraft : 0,
+            tricksDrafts: savedState.tricksDrafts && typeof savedState.tricksDrafts === "object"
+                ? savedState.tricksDrafts
+                : {},
+            roundHistory: Array.isArray(savedState.roundHistory) ? savedState.roundHistory : [],
+            rankingSubmittedGameID: savedState.rankingSubmittedGameID || null,
+            statsReturnPhase: state.statsReturnPhase,
+            ranking: state.ranking,
+            noticeMessage: "Saved game loaded from server."
+        };
+    }
+
+    async function saveGameToServer() {
+        if (!state.engine) {
+            state.errorMessage = "Start a game before saving.";
+            state.noticeMessage = null;
+            render();
+            return;
+        }
+
+        const response = await fetch("/api/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(makeSavePayload())
+        });
+
+        if (!response.ok) {
+            throw new Error(await responseTextOrDefault(response, "Could not save game on server."));
+        }
+
+        state.errorMessage = null;
+        state.noticeMessage = "Game saved on server.";
+        render();
+    }
+
+    async function openStatistics() {
+        state.statsReturnPhase = state.phase === "statistics" ? "welcome" : state.phase;
+        await refreshRankingFromServer({
+            nextPhase: "statistics",
+            notice: null
+        });
+    }
+
+    async function loadGameFromServer() {
+        if (state.engine && !window.confirm("Load the server save and replace the current game?")) {
+            return;
+        }
+
+        const response = await fetch("/api/save");
+
+        if (response.status === 404) {
+            state.errorMessage = "There is no saved game on this server yet.";
+            state.noticeMessage = null;
+            render();
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error(await responseTextOrDefault(response, "Could not load saved game."));
+        }
+
+        const payload = await response.json();
+        state = hydrateSavedState(payload.state || payload);
+        render();
+    }
+
+    function makeFinishedGamePayload() {
+        return {
+            version: 1,
+            gameID: state.gameID || createClientID(),
+            finishedAt: new Date().toISOString(),
+            players: state.engine.players.map((player) => ({
+                id: player.id,
+                name: player.name,
+                totalScore: player.totalScore
+            })),
+            rounds: state.roundHistory
+        };
+    }
+
+    async function submitFinishedGameToServer() {
+        if (!state.engine || !state.engine.isFinished) {
+            state.errorMessage = "Finish the game before updating the ranking.";
+            state.noticeMessage = null;
+            render();
+            return;
+        }
+
+        if (state.rankingSubmittedGameID === state.gameID && state.ranking) {
+            state.noticeMessage = "This game is already in the server ranking.";
+            state.errorMessage = null;
+            render();
+            return;
+        }
+
+        const response = await fetch("/api/ranking/game", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(makeFinishedGamePayload())
+        });
+
+        if (!response.ok) {
+            throw new Error(await responseTextOrDefault(response, "Could not update server ranking."));
+        }
+
+        const payload = await response.json();
+        state.ranking = payload.ranking;
+        state.rankingSubmittedGameID = state.gameID;
+        state.errorMessage = null;
+        state.noticeMessage = payload.recorded
+            ? "Server ranking updated."
+            : "This game was already counted on the server.";
+        render();
+    }
+
+    async function refreshRankingFromServer(options = {}) {
+        const response = await fetch("/api/ranking");
+
+        if (!response.ok) {
+            if (!options.silent) {
+                throw new Error(await responseTextOrDefault(response, "Could not load server ranking."));
+            }
+            return;
+        }
+
+        state.ranking = await response.json();
+        if (options.nextPhase) {
+            state.phase = options.nextPhase;
+        }
+        if (!options.silent) {
+            state.errorMessage = null;
+            state.noticeMessage = options.notice === undefined
+                ? "Server ranking refreshed."
+                : options.notice;
+        }
+        render();
+    }
+
+    async function responseTextOrDefault(response, fallback) {
+        try {
+            const payload = await response.json();
+            return payload.message || fallback;
+        } catch (error) {
+            return fallback;
+        }
     }
 
     render();
+    refreshRankingFromServer({ silent: true }).catch(() => {});
 })();

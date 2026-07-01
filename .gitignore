@@ -35,6 +35,13 @@ build/
 .build/
 .swiftpm/
 
+### Pochify web server ###
+web/server_data/
+
+### Python ###
+__pycache__/
+*.py[cod]
+
 ### VS Code ###
 .vscode/
 

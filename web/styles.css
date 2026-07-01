@@ -128,6 +128,17 @@ button:disabled {
     vertical-align: middle;
 }
 
+.utility-button {
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--felt-dark);
+    font-size: 0.86rem;
+    font-weight: 900;
+}
+
 .screen {
     flex: 1;
     display: flex;
@@ -161,7 +172,9 @@ button:disabled {
 .info-panel,
 .score-panel,
 .winner-panel,
-.summary-strip {
+.summary-strip,
+.ranking-panel,
+.empty-panel {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
@@ -221,14 +234,34 @@ button:disabled {
     height: 92px;
     display: grid;
     place-items: center;
+    align-content: center;
+    gap: 6px;
     border: 1px solid #cad1cc;
     border-radius: 8px;
     background: #fffdf9;
     color: var(--blue);
-    font-size: 2rem;
     font-weight: 900;
     box-shadow: 0 10px 24px rgba(20, 23, 20, 0.14);
     transform: rotate(-7deg);
+}
+
+.mini-card svg {
+    width: 38px;
+    height: 38px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.suit-card span {
+    max-width: 58px;
+    color: currentColor;
+    font-size: 0.72rem;
+    line-height: 1;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .mini-card + .mini-card {
@@ -245,6 +278,10 @@ button:disabled {
 
 .gold-card {
     color: var(--gold);
+}
+
+.sword-card {
+    color: var(--blue);
 }
 
 .stack {
@@ -326,7 +363,9 @@ button:focus-visible {
 
 .rows,
 .score-list,
-.tricks-list {
+.tricks-list,
+.ranking-list,
+.stats-summary {
     display: grid;
     gap: 10px;
 }
@@ -334,7 +373,8 @@ button:focus-visible {
 .order-row,
 .bid-row,
 .score-row,
-.player-card {
+.player-card,
+.ranking-card {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
@@ -567,6 +607,129 @@ button:focus-visible {
     color: #805217;
 }
 
+.ranking-panel {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+}
+
+.section-title-row,
+.ranking-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.section-title-row h2,
+.ranking-card h3 {
+    margin: 0;
+}
+
+.section-title-row h2 {
+    font-size: 1rem;
+}
+
+.section-title-row span {
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.ranking-card {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+}
+
+.ranking-list.full {
+    padding-bottom: 4px;
+}
+
+.statistics-card {
+    gap: 14px;
+}
+
+.ranking-main {
+    justify-content: flex-start;
+}
+
+.ranking-main div {
+    min-width: 0;
+}
+
+.ranking-card h3 {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.ranking-card p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.stat-grid.detailed {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stats-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat-chip {
+    min-height: 52px;
+    display: grid;
+    align-content: center;
+    gap: 3px;
+    border-radius: 8px;
+    background: var(--surface-strong);
+    padding: 8px 10px;
+}
+
+.stat-chip small,
+.stat-chip strong {
+    min-width: 0;
+}
+
+.stat-chip small {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.stat-chip strong {
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.empty-panel {
+    display: grid;
+    gap: 6px;
+    padding: 18px;
+}
+
+.empty-panel h2,
+.empty-panel p {
+    margin: 0;
+}
+
+.empty-panel h2 {
+    font-size: 1.1rem;
+}
+
+.empty-panel p {
+    color: var(--muted);
+    line-height: 1.4;
+}
+
 .winner-panel {
     display: grid;
     gap: 5px;
@@ -592,21 +755,35 @@ button:focus-visible {
     padding-top: 6px;
     position: sticky;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    display: grid;
+    gap: 10px;
 }
 
-.primary-button {
+.primary-button,
+.secondary-button {
     width: 100%;
     min-height: 54px;
     border: 0;
     border-radius: 8px;
-    background: var(--felt);
-    color: white;
-    box-shadow: 0 10px 24px rgba(23, 102, 79, 0.24);
     font-size: 1rem;
     font-weight: 900;
 }
 
+.primary-button {
+    background: var(--felt);
+    color: white;
+    box-shadow: 0 10px 24px rgba(23, 102, 79, 0.24);
+}
+
+.secondary-button {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--felt-dark);
+    box-shadow: 0 8px 20px rgba(23, 34, 28, 0.08);
+}
+
 .primary-button:active,
+.secondary-button:active,
 .stepper button:active {
     transform: translateY(1px);
 }
@@ -635,6 +812,12 @@ button:focus-visible {
     z-index: 10;
 }
 
+.toast.notice {
+    border-color: #bad0c0;
+    background: #f2fbf4;
+    color: var(--felt-dark);
+}
+
 .toast p {
     flex: 1;
     margin: 0;
@@ -649,6 +832,10 @@ button:focus-visible {
     background: var(--red);
     color: white;
     font-weight: 900;
+}
+
+.toast.notice button {
+    background: var(--felt);
 }
 
 @media (min-width: 720px) {
