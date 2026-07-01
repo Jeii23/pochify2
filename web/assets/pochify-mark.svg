@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Pochify">
+    <rect width="96" height="96" rx="20" fill="#17664f"/>
+    <rect x="22" y="23" width="36" height="50" rx="6" fill="#fffdf9" transform="rotate(-8 40 48)"/>
+    <rect x="38" y="22" width="36" height="50" rx="6" fill="#eef3ed" transform="rotate(8 56 47)"/>
+    <circle cx="45" cy="48" r="8" fill="#b33934"/>
+    <path d="M55 39l7 9-7 9-7-9z" fill="#b77c28"/>
+</svg>

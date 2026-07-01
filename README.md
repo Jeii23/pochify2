@@ -118,12 +118,123 @@ Pochify is a JavaFX-based implementation of the traditional Spanish card game **
   - `game-details-view.fxml`: Displays details after bidding.
   - `finalize-round-view.fxml`: Screen where players input the number of tricks won.
   - `view-scores-view.fxml`: Displays updated scores after each round.
+- **`web/`**: Mobile-first static web port based on the SwiftUI flow.
+  - `index.html`: Browser entry point.
+  - `game-core.js`: JavaScript port of the iOS `PochifyCore` rules.
+  - `app.js` and `styles.css`: Touch-friendly web interface.
+  - `game-core.test.js`: Node-based regression tests for the web rules.
+
+## Native iOS SwiftUI Port
+
+A new native iOS implementation lives in **`ios/PochifyIOS/`**. It keeps the JavaFX desktop app intact and ports the backend rules into Swift.
+
+### How to open and run in Xcode
+
+1. Open the project on macOS with Xcode 15 or newer:
+
+   ```bash
+   open ios/PochifyIOS/PochifyIOS.xcodeproj
+   ```
+
+2. Select the **PochifyIOS** scheme.
+3. Choose an iPhone simulator.
+4. Press **Run**.
+
+The WSL/Linux environment can compile and test the shared Swift logic, but it cannot run the SwiftUI iOS interface because the iOS simulator and SwiftUI runtime require macOS and Xcode.
+
+### Swift project layout
+
+- **`ios/PochifyIOS/Sources/PochifyCore/`**: Testable game logic ported from the Java backend.
+  - `GameEngine.swift`: Swift equivalent of the state and round progression in `Partida.java`.
+  - `Player.swift`: Swift equivalent of `Jugador.java`, including the score formula.
+  - `RoundType.swift`: Swift equivalent of `TipusRonda.java`.
+  - `RoundSummary.swift`: Small value types used to describe rounds and results.
+- **`ios/PochifyIOS/Sources/PochifyIOS/`**: SwiftUI app and MVVM flow.
+  - `GameViewModel.swift`: UI-facing coordinator around `GameEngine`.
+  - `ContentView.swift` and `GameScreens.swift`: Mobile-first screens for setup, bidding, tricks, scores, and final ranking.
+- **`ios/PochifyIOS/Tests/PochifyCoreTests/`**: Unit tests for the ported rules.
+- **`ios/PochifyIOS/Package.swift`**: SwiftPM entry point for running the logic tests outside Xcode.
+- **`ios/PochifyIOS/PochifyIOS.xcodeproj`**: Xcode wrapper with app, core framework, and test targets.
+
+### Java logic mapping
+
+- `Partida.calcularNCartes` maps to `GameEngine.calculateTotalCards(playerCount:)`.
+- `Partida.calcularNRondes` maps to `GameEngine.calculateTotalRounds(playerCount:totalCards:)`.
+- `Partida.donarCartes` and `calcularTipusRonda` map to `GameEngine.beginNextRound()`, `cardsPerPlayer(for:)`, and `roundType(for:)`.
+- `Partida.getJugadorsEnOrdre` and `avançarJugadorInicial` map to `playerOrderIDs(startingAt:)` and the rotation performed after `completeRound`.
+- `Partida.comprovaAposta` maps to `bidValidationMessage(playerID:bid:)`, preserving the last-player rule that total bids cannot equal the cards in the round.
+- `Jugador.calcularPuntuacio` maps to `Player.scoreDelta(roundType:bid:tricksWon:)` and `applyScore(roundType:tricksWon:)`.
+- `TipusRonda` maps to `RoundType` with the same cases: `BASIC`, `SIN_PALO`, `SUBASTA`, `DADO`, `MANO_PINTA`, and `OROS_DOBLES`.
+
+### Intentional changes and old quirks found
+
+- The JavaFX UI has no end-of-game check in `ViewScoresController`; the iOS app adds a final ranking screen when `currentRound >= totalRounds`.
+- The iOS app validates bids and tricks with steppers and requires total tricks won to equal the cards in the round. This is a UI/data-entry guard; the scoring formula is unchanged.
+- The old `Partida.getJugadorFinal()` hard-codes `4` and is not used by the JavaFX controller flow.
+- The old `Partida.afegeixJugador` compares strings with `!=` and is not used by the JavaFX player-name screen.
+- `NewRoundController` calls `donarCartes()` more than once around bidding; the Swift engine centralizes this in `beginNextRound()` for a single active round.
+
+### Installed tooling in this workspace
+
+Java 21 and Maven are already available for the existing JavaFX project. Swift was installed with the official Swiftly installer under:
+
+```bash
+/home/jaume/.local/share/swiftly
+```
+
+Swiftly also created `.swift-version` with `Swift 6.3.3` for this repository.
+
+If your shell has not picked up Swiftly yet, load it with:
+
+```bash
+. /home/jaume/.local/share/swiftly/env.sh
+```
+
+In this sandboxed WSL session, SwiftPM cache writes to the real home directory are restricted, so the verified test command uses temporary writable caches:
+
+```bash
+cd ios/PochifyIOS
+HOME=/tmp/pochify-swift-home XDG_CACHE_HOME=/tmp/pochify-swift-cache /home/jaume/.local/share/swiftly/toolchains/6.3.3/usr/bin/swift test
+```
+
+On a normal macOS or Linux shell after loading Swiftly, this should usually be enough:
+
+```bash
+cd ios/PochifyIOS
+swift test
+```
+
+## Mobile Web Port
+
+A static mobile web version now lives in **`web/`**. It adapts the iOS SwiftUI flow for a phone browser: large touch targets, safe-area spacing, sticky primary actions, local game restore with `localStorage`, and the same bidding, tricks, rotation, scoring, and final-ranking rules as the Swift core.
+
+### How to open locally
+
+You can open `web/index.html` directly in a browser. To test it from a phone on the same network, serve the folder with any static server, for example:
+
+```bash
+python3 -m http.server 8000 -d web
+```
+
+Then open `http://<computer-ip>:8000` on the phone.
+
+### Web test command
+
+```bash
+node web/game-core.test.js
+```
 
 ## Technologies Used
 
 - **Java 11 or higher**
 - **JavaFX**
 - **Maven**
+- **Swift 6.3.3**
+- **SwiftUI**
+- **XCTest**
+- **HTML**
+- **CSS**
+- **JavaScript**
 
 ## Contributors
 
@@ -142,4 +253,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Testers**: Friends and colleagues who tested the game and provided valuable feedback.
 
 ---
-

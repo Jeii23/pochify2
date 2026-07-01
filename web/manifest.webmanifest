@@ -1,0 +1,17 @@
+{
+    "name": "Pochify",
+    "short_name": "Pochify",
+    "description": "Mobile web scorekeeper for La Pocha.",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f7f8f5",
+    "theme_color": "#17664f",
+    "icons": [
+        {
+            "src": "assets/pochify-mark.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
