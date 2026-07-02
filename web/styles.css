@@ -94,16 +94,24 @@ button:disabled {
 .round-pill {
     max-width: 150px;
     min-height: 34px;
+    display: inline-grid;
+    place-items: center;
     padding: 7px 10px;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: var(--surface);
     color: var(--muted);
+    font-family: inherit;
     font-size: 0.84rem;
     font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+button.round-pill {
+    cursor: pointer;
 }
 
 .icon-button {
@@ -365,6 +373,7 @@ button:focus-visible {
 .score-list,
 .tricks-list,
 .ranking-list,
+.round-history-list,
 .stats-summary {
     display: grid;
     gap: 10px;
@@ -374,6 +383,7 @@ button:focus-visible {
 .bid-row,
 .score-row,
 .player-card,
+.round-history-card,
 .ranking-card {
     border: 1px solid var(--line);
     border-radius: 8px;
@@ -605,6 +615,80 @@ button:focus-visible {
 .score-row:first-child .rank-badge {
     background: rgba(183, 124, 40, 0.22);
     color: #805217;
+}
+
+.round-history-list {
+    padding-bottom: 4px;
+}
+
+.round-history-card {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+}
+
+.round-history-head,
+.round-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.round-history-head div,
+.round-result-row div {
+    min-width: 0;
+}
+
+.round-history-head h2,
+.round-history-head p,
+.round-result-row strong,
+.round-result-row span {
+    margin: 0;
+}
+
+.round-history-head h2 {
+    font-size: 1.05rem;
+}
+
+.round-history-head p,
+.round-result-row span {
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.round-history-rows {
+    display: grid;
+    gap: 8px;
+}
+
+.round-result-row {
+    min-height: 50px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface-strong);
+}
+
+.round-result-row > div:first-child {
+    display: grid;
+    gap: 3px;
+}
+
+.round-result-row strong,
+.round-result-row span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.round-result-score {
+    display: grid;
+    gap: 3px;
+    text-align: right;
+}
+
+.round-result-score strong {
+    color: var(--felt);
+    font-variant-numeric: tabular-nums;
 }
 
 .ranking-panel {

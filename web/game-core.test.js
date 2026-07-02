@@ -14,7 +14,7 @@ function run() {
     assert.equal(GameEngine.calculateTotalRounds(4), 32);
     assert.equal(GameEngine.calculateTotalRounds(5), 36);
 
-    const rotationEngine = new GameEngine(3);
+    const rotationEngine = new GameEngine(3, { random: () => 0 });
     const firstRound = rotationEngine.beginNextRound();
     const firstOrder = firstRound.playerOrderIDs.map((id) => rotationEngine.player(id).name);
     assert.deepEqual(firstOrder, ["Player 1", "Player 2", "Player 3"]);
@@ -31,6 +31,11 @@ function run() {
     const secondRound = rotationEngine.beginNextRound();
     const secondOrder = secondRound.playerOrderIDs.map((id) => rotationEngine.player(id).name);
     assert.deepEqual(secondOrder, ["Player 2", "Player 3", "Player 1"]);
+
+    const randomStartEngine = new GameEngine(3, { random: () => 0.72 });
+    const randomStartRound = randomStartEngine.beginNextRound();
+    const randomStartOrder = randomStartRound.playerOrderIDs.map((id) => randomStartEngine.player(id).name);
+    assert.deepEqual(randomStartOrder, ["Player 3", "Player 1", "Player 2"]);
 
     const bidEngine = new GameEngine(3);
     const bidRound = bidEngine.beginNextRound();

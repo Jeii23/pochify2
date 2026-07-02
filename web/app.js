@@ -20,6 +20,7 @@
         ranking: null,
         rankingSubmittedGameID: null,
         statsReturnPhase: "welcome",
+        roundHistoryReturnPhase: "welcome",
         errorMessage: null,
         noticeMessage: null
     });
@@ -48,7 +49,7 @@
     }
 
     function roundTypeName(roundType) {
-        return ROUND_TYPE_LABELS[roundType] || roundType;
+        return ROUND_TYPE_LABELS[roundType] || roundType || "Round";
     }
 
     function playerName(playerID) {
@@ -109,6 +110,18 @@
         return Boolean(state.activeRound && totalTricksDraft() === state.activeRound.cardsPerPlayer);
     }
 
+    function maxTricksForPlayer(playerID) {
+        if (!state.activeRound) {
+            return 0;
+        }
+
+        const current = state.tricksDrafts[playerID] || 0;
+        const totalWithoutPlayer = totalTricksDraft() - current;
+        const max = state.activeRound.cardsPerPlayer - totalWithoutPlayer;
+
+        return Math.max(0, Math.min(state.activeRound.cardsPerPlayer, max));
+    }
+
     function render() {
         const screen = {
             welcome: renderWelcome,
@@ -119,6 +132,7 @@
             tricksInput: renderTricksInput,
             scores: renderScores,
             finalRanking: renderFinalRanking,
+            roundHistoryView: renderRoundHistoryView,
             statistics: renderStatisticsView
         }[state.phase] || renderWelcome;
 
@@ -151,7 +165,16 @@
                     <span>Pochify</span>
                 </div>
                 <div class="top-actions">
-                    <span class="round-pill">${escapeHTML(roundText)}</span>
+                    ${showGameActions ? `
+                        <button
+                            class="round-pill"
+                            type="button"
+                            data-action="open-round-history"
+                            aria-label="View round history"
+                        >${escapeHTML(roundText)}</button>
+                    ` : `
+                        <span class="round-pill">${escapeHTML(roundText)}</span>
+                    `}
                     ${showGameActions ? `
                         <button class="utility-button" type="button" data-action="save-game">Save</button>
                         <button class="icon-button" type="button" data-action="restart-confirm" aria-label="New game">
@@ -381,6 +404,7 @@
             <section class="tricks-list">
                 ${players().map((player) => {
                     const value = state.tricksDrafts[player.id] || 0;
+                    const max = maxTricksForPlayer(player.id);
 
                     return `
                         <article class="player-card">
@@ -391,7 +415,7 @@
                                 </div>
                                 <strong>${value}</strong>
                             </div>
-                            ${renderStepper("Tricks", value, 0, round.cardsPerPlayer, "tricks", player.id)}
+                            ${renderStepper("Tricks", value, 0, max, "tricks", player.id)}
                         </article>
                     `;
                 }).join("")}
@@ -403,6 +427,31 @@
                     data-action="complete-round"
                     ${canComplete ? "" : "disabled"}
                 >Calculate scores</button>
+            </div>
+        `;
+    }
+
+    function renderRoundHistoryView() {
+        if (!state.engine) {
+            return renderEmptyGame();
+        }
+
+        const history = Array.isArray(state.roundHistory) ? state.roundHistory : [];
+
+        return `
+            ${renderHeader("Rounds", "Completed round scores.")}
+            ${history.length === 0 ? `
+                <section class="empty-panel">
+                    <h2>No completed rounds yet</h2>
+                    <p>Complete a round and it will appear here.</p>
+                </section>
+            ` : `
+                <section class="round-history-list">
+                    ${history.map(renderRoundHistoryCard).join("")}
+                </section>
+            `}
+            <div class="action-bar">
+                <button class="primary-button" type="button" data-action="close-round-history">Back</button>
             </div>
         `;
     }
@@ -512,6 +561,40 @@
         `;
     }
 
+    function renderRoundHistoryCard(round) {
+        const results = Array.isArray(round.results) ? round.results : [];
+        const cards = Number.isInteger(round.cardsPerPlayer) ? round.cardsPerPlayer : "-";
+
+        return `
+            <article class="round-history-card">
+                <div class="round-history-head">
+                    <div>
+                        <h2>Round ${escapeHTML(round.roundNumber || "-")}</h2>
+                        <p>${escapeHTML(roundTypeName(round.roundType))} · ${escapeHTML(cards)} cards</p>
+                    </div>
+                </div>
+                <div class="round-history-rows">
+                    ${results.map(renderRoundHistoryResult).join("")}
+                </div>
+            </article>
+        `;
+    }
+
+    function renderRoundHistoryResult(result) {
+        return `
+            <div class="round-result-row">
+                <div>
+                    <strong>${escapeHTML(result.playerName || "Player")}</strong>
+                    <span>Bid ${escapeHTML(formatInteger(result.bid))}, tricks ${escapeHTML(formatInteger(result.tricksWon))}</span>
+                </div>
+                <div class="round-result-score">
+                    <strong>${escapeHTML(formatSignedInteger(result.scoreDelta))}</strong>
+                    <span>Total ${escapeHTML(formatInteger(result.totalScore))}</span>
+                </div>
+            </div>
+        `;
+    }
+
     function renderLocalRanking() {
         const ranking = state.ranking;
         if (!ranking || !Array.isArray(ranking.players) || ranking.players.length === 0) {
@@ -610,6 +693,18 @@
         });
     }
 
+    function formatInteger(value) {
+        return Number.isInteger(value) ? String(value) : "-";
+    }
+
+    function formatSignedInteger(value) {
+        if (!Number.isInteger(value)) {
+            return "-";
+        }
+
+        return value > 0 ? `+${value}` : String(value);
+    }
+
     function renderStepper(label, value, min, max, actionPrefix, playerID) {
         const playerAttribute = playerID ? `data-player-id="${escapeHTML(playerID)}"` : "";
 
@@ -706,6 +801,10 @@
             } else if (action === "open-statistics") {
                 openStatistics();
                 return;
+            } else if (action === "open-round-history") {
+                openRoundHistory();
+            } else if (action === "close-round-history") {
+                closeRoundHistory();
             } else if (action === "refresh-statistics") {
                 refreshRankingFromStorage({ notice: "Statistics refreshed." });
                 return;
@@ -776,6 +875,7 @@
         state.tricksDrafts = {};
         state.roundHistory = [];
         state.rankingSubmittedGameID = null;
+        state.roundHistoryReturnPhase = "roundOverview";
         state.errorMessage = null;
         state.noticeMessage = null;
         state.phase = "roundOverview";
@@ -823,15 +923,42 @@
     }
 
     function updateTricks(playerID, delta) {
-        if (!state.activeRound) {
+        if (!state.activeRound || !playerID) {
             return;
         }
 
         const current = state.tricksDrafts[playerID] || 0;
+        const max = maxTricksForPlayer(playerID);
         state.tricksDrafts[playerID] = Math.max(
             0,
-            Math.min(state.activeRound.cardsPerPlayer, current + delta)
+            Math.min(max, current + delta)
         );
+    }
+
+    function openRoundHistory() {
+        if (!state.engine) {
+            return;
+        }
+
+        if (state.phase !== "roundHistoryView") {
+            state.roundHistoryReturnPhase = state.phase;
+        }
+
+        state.phase = "roundHistoryView";
+    }
+
+    function closeRoundHistory() {
+        const fallbackPhase = state.engine && state.engine.isFinished
+            ? "finalRanking"
+            : state.activeRound
+                ? "roundOverview"
+                : "scores";
+        const returnPhase = state.roundHistoryReturnPhase;
+        const canUseReturnPhase = returnPhase
+            && returnPhase !== "roundHistoryView"
+            && !(state.engine && returnPhase === "welcome");
+
+        state.phase = canUseReturnPhase ? returnPhase : fallbackPhase;
     }
 
     async function completeRound() {
@@ -871,6 +998,7 @@
                 bidDraft: state.bidDraft,
                 tricksDrafts: state.tricksDrafts,
                 roundHistory: state.roundHistory,
+                roundHistoryReturnPhase: state.roundHistoryReturnPhase,
                 rankingSubmittedGameID: state.rankingSubmittedGameID
             }
         };
@@ -897,6 +1025,9 @@
             roundHistory: Array.isArray(savedState.roundHistory) ? savedState.roundHistory : [],
             rankingSubmittedGameID: savedState.rankingSubmittedGameID || null,
             statsReturnPhase: state.statsReturnPhase,
+            roundHistoryReturnPhase: typeof savedState.roundHistoryReturnPhase === "string"
+                ? savedState.roundHistoryReturnPhase
+                : "welcome",
             ranking: state.ranking,
             noticeMessage: "Saved game loaded from this browser."
         };

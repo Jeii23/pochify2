@@ -80,8 +80,19 @@
         return values[playerID];
     }
 
+    function randomStartingPlayerIndex(playerCount, random) {
+        const randomValue = typeof random === "function" ? random() : Math.random();
+        const index = Math.floor(randomValue * playerCount);
+
+        if (!Number.isInteger(index)) {
+            return 0;
+        }
+
+        return Math.max(0, Math.min(playerCount - 1, index));
+    }
+
     class GameEngine {
-        constructor(playerCount) {
+        constructor(playerCount, options = {}) {
             if (!SUPPORTED_PLAYER_COUNTS.includes(playerCount)) {
                 throw new Error(`Pochify supports 3, 4, or 5 players, not ${playerCount}.`);
             }
@@ -92,7 +103,7 @@
             this.totalCards = totalCards;
             this.totalRounds = GameEngine.calculateTotalRounds(playerCount, totalCards);
             this.currentRound = 0;
-            this.startingPlayerIndex = 0;
+            this.startingPlayerIndex = randomStartingPlayerIndex(playerCount, options.random);
             this.activeRound = null;
             this.lastRoundResults = [];
         }
@@ -103,7 +114,9 @@
             engine.totalCards = snapshot.totalCards;
             engine.totalRounds = snapshot.totalRounds;
             engine.currentRound = snapshot.currentRound;
-            engine.startingPlayerIndex = snapshot.startingPlayerIndex;
+            engine.startingPlayerIndex = Number.isInteger(snapshot.startingPlayerIndex)
+                ? snapshot.startingPlayerIndex
+                : 0;
             engine.activeRound = snapshot.activeRound || null;
             engine.lastRoundResults = Array.isArray(snapshot.lastRoundResults)
                 ? snapshot.lastRoundResults
