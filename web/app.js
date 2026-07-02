@@ -292,6 +292,7 @@
         }
 
         const message = currentBidValidationMessage();
+        const canUndoBid = state.biddingIndex > 0;
 
         return `
             ${renderHeader(player.name, "Bid")}
@@ -325,6 +326,9 @@
                     data-action="confirm-bid"
                     ${message ? "disabled" : ""}
                 >Confirm bid</button>
+                ${canUndoBid ? `
+                    <button class="secondary-button" type="button" data-action="undo-bid">Back</button>
+                ` : ""}
             </div>
         `;
     }
@@ -355,6 +359,7 @@
             </section>
             <div class="action-bar">
                 <button class="primary-button" type="button" data-action="enter-tricks">Enter tricks won</button>
+                <button class="secondary-button" type="button" data-action="undo-bid">Edit bids</button>
             </div>
         `;
     }
@@ -720,6 +725,8 @@
             } else if (action === "confirm-bid") {
                 confirmBid();
                 return;
+            } else if (action === "undo-bid") {
+                undoBid();
             } else if (action === "enter-tricks") {
                 state.tricksDrafts = Object.fromEntries(players().map((player) => [
                     player.id,
@@ -792,6 +799,27 @@
         }
 
         render();
+    }
+
+    function undoBid() {
+        const order = playerOrder();
+        if (order.length === 0) {
+            return;
+        }
+
+        if (state.phase === "roundDetails") {
+            state.biddingIndex = order.length;
+        }
+
+        if (state.biddingIndex <= 0) {
+            return;
+        }
+
+        state.biddingIndex -= 1;
+        state.phase = "bidding";
+
+        const player = currentBiddingPlayer();
+        state.bidDraft = player ? player.currentBid : 0;
     }
 
     function updateTricks(playerID, delta) {
